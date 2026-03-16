@@ -65,10 +65,31 @@ export const tasks = pgTable('tasks', {
   dueDate: date('due_date'),
 });
 
+export const inventory = pgTable('inventory', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  sku: text('sku').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description'),
+  size: text('size'),
+  category: text('category').notNull(), // bridal, quinceanera, decoration
+  rentalPrice: integer('rental_price').notNull(), // in cents
+  depositAmount: integer('deposit_amount').notNull(), // in cents
+  status: text('status').notNull().default('available'), // available, reserved, rented, cleaning, overdue
+  imageUrl: text('image_url'),
+  notes: text('notes'),
+  lastCleanedDate: date('last_cleaned_date'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const inventoryRentals = pgTable('inventory_rentals', {
   id: uuid('id').defaultRandom().primaryKey(),
   eventId: uuid('event_id').references(() => events.id).notNull(),
-  itemId: text('item_id').notNull(), // SKU or ID of dress/decor
+  itemId: uuid('item_id').references(() => inventory.id).notNull(),
   status: text('status').notNull(), // reserved, rented, returned, overdue
+  pickupDate: date('pickup_date').notNull(),
   returnDate: date('return_date').notNull(),
+  conditionOnReturn: text('condition_on_return'), // Excellent, Good, Minor wear, Damage noted
+  damageNotes: text('damage_notes'),
+  returnedAt: timestamp('returned_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });

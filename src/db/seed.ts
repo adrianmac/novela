@@ -78,3 +78,100 @@ async function seed() {
 }
 
 seed().catch(console.error).finally(() => process.exit(0));
+
+async function seedInventory() {
+  console.log('Clearing inventory...');
+  await db.delete(schema.inventoryRentals);
+  await db.delete(schema.inventory);
+
+  console.log('Seeding inventory...');
+  const [dress1] = await db.insert(schema.inventory).values({
+    sku: 'WD-001',
+    name: 'Ivory Lace Ballgown',
+    description: 'Beautiful A-line ballgown with sweetheart neckline',
+    size: '8',
+    category: 'bridal',
+    rentalPrice: 85000,
+    depositAmount: 30000,
+    status: 'available',
+    lastCleanedDate: new Date().toISOString(),
+  }).returning();
+
+  const [dress2] = await db.insert(schema.inventory).values({
+    sku: 'WD-002',
+    name: 'Mermaid Silk Gown',
+    description: 'Sleek mermaid silhouette in pure silk',
+    size: '10',
+    category: 'bridal',
+    rentalPrice: 120000,
+    depositAmount: 50000,
+    status: 'reserved',
+    lastCleanedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+  }).returning();
+
+  const [qDress] = await db.insert(schema.inventory).values({
+    sku: 'QA-050',
+    name: 'Ruby Red Quince Gown',
+    description: 'Voluminous tulle skirt with beaded bodice',
+    size: '6',
+    category: 'quinceanera',
+    rentalPrice: 55000,
+    depositAmount: 20000,
+    status: 'rented',
+    lastCleanedDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+  }).returning();
+
+  const [decor] = await db.insert(schema.inventory).values({
+    sku: 'DEC-010',
+    name: 'Gold Chiavari Chair',
+    description: 'Classic gold chairs with white cushion',
+    size: 'Standard',
+    category: 'decoration',
+    rentalPrice: 800,
+    depositAmount: 200,
+    status: 'available',
+    lastCleanedDate: new Date().toISOString(),
+  }).returning();
+
+  const [dressOverdue] = await db.insert(schema.inventory).values({
+    sku: 'WD-099',
+    name: 'Vintage Lace Gown',
+    description: 'Heirloom style lace',
+    size: '12',
+    category: 'bridal',
+    rentalPrice: 70000,
+    depositAmount: 25000,
+    status: 'overdue',
+    lastCleanedDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+  }).returning();
+
+  // Create rentals
+  const eventsList = await db.select().from(schema.events);
+  if (eventsList.length > 0) {
+    await db.insert(schema.inventoryRentals).values({
+      eventId: eventsList[0].id,
+      itemId: dress2.id,
+      status: 'reserved',
+      pickupDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+      returnDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+    });
+
+    await db.insert(schema.inventoryRentals).values({
+      eventId: eventsList[0].id,
+      itemId: qDress.id,
+      status: 'rented',
+      pickupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      returnDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+    });
+
+    await db.insert(schema.inventoryRentals).values({
+      eventId: eventsList[0].id,
+      itemId: dressOverdue.id,
+      status: 'overdue',
+      pickupDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      returnDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    });
+  }
+}
+
+seedInventory().catch(console.error).finally(() => process.exit(0));
