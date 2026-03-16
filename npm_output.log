@@ -1,0 +1,29 @@
+
+> app@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 1833ms
+ ○ Compiling /dashboard ...
+request to https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbV2o-flEEny0FZhsfKu5WU4xD2OwGtT0rU3BE.woff2 failed, reason:
+
+Retrying 1/3...
+request to https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbV2o-flEEny0FZhsfKu5WU4xD_OwGtT0rU3BE.woff2 failed, reason:
+
+Retrying 1/3...
+request to https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbV2o-flEEny0FZhsfKu5WU4xD4OwGtT0rU3BE.woff2 failed, reason:
+
+Retrying 1/3...
+request to https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbV2o-flEEny0FZhsfKu5WU4xD0OwGtT0rU3BE.woff2 failed, reason:
+
+Retrying 1/3...
+request to https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbV2o-flEEny0FZhsfKu5WU4xD1OwGtT0rU3BE.woff2 failed, reason:
+
+Retrying 1/3...
+ ✓ Compiled /dashboard in 8s (550 modules)
+ ✓ Compiled in 794ms (241 modules)
+ GET /dashboard 200 in 8899ms
+ GET /dashboard 200 in 249ms
