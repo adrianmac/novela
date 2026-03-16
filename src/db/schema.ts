@@ -6,6 +6,10 @@ export const clients = pgTable('clients', {
   lastName: text('last_name').notNull(),
   email: text('email'),
   phone: text('phone'),
+  secondaryContactName: text('secondary_contact_name'),
+  secondaryContactPhone: text('secondary_contact_phone'),
+  hearAboutUs: text('hear_about_us'), // Walk-in, Instagram, Google, Facebook, Referral, Other
+  referredBy: text('referred_by'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -15,7 +19,11 @@ export const events = pgTable('events', {
   type: text('type').notNull(), // 'wedding' or 'quinceanera'
   date: date('date').notNull(),
   status: text('status').notNull(), // inquiry, consultation_scheduled, active, in_progress, completed, cancelled
-  totalValue: integer('total_value').notNull(), // in cents
+  guestCount: integer('guest_count'),
+  venueName: text('venue_name'),
+  venueCity: text('venue_city'),
+  budgetRange: text('budget_range'), // Under $2,000 | $2,000-$4,000 | $4,000-$7,000 | $7,000-$10,000 | $10,000+
+  totalValue: integer('total_value').notNull().default(0), // in cents
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -33,6 +41,7 @@ export const appointments = pgTable('appointments', {
   date: timestamp('date').notNull(),
   staffId: text('staff_id'), // clerk user id
   staffName: text('staff_name'),
+  notes: text('notes'),
   status: text('status').notNull(), // upcoming, confirmed, checked_in, completed, cancelled
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
