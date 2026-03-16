@@ -36,3 +36,21 @@ Retrying 1/3...
  ✓ Compiled /dashboard/events in 2.7s (633 modules)
  GET /dashboard/events 200 in 3164ms
  GET /dashboard/events 200 in 56ms
+ ✓ Compiled in 1594ms (293 modules)
+ ✓ Compiled in 227ms (307 modules)
+ ✓ Compiled in 470ms (307 modules)
+ ✓ Compiled in 336ms (307 modules)
+ ✓ Compiled in 233ms (307 modules)
+ ✓ Compiled in 269ms (307 modules)
+ ○ Compiling /dashboard/events/[eventId] ...
+ ✓ Compiled /dashboard/events/[eventId] in 601ms (574 modules)
+ GET /dashboard/events/e1 200 in 1559ms
+ GET /dashboard/events/e1 200 in 99ms
+ ✓ Compiled in 1503ms (307 modules)
+ ✓ Compiled in 507ms (307 modules)
+ ✓ Compiled in 424ms (307 modules)
+ ✓ Compiled in 248ms (307 modules)
+ ✓ Compiled in 301ms (307 modules)
+ ✓ Compiled in 292ms (307 modules)
+ ✓ Compiled in 249ms (307 modules)
+ ✓ Compiled in 315ms (307 modules)
