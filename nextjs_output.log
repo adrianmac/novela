@@ -1,0 +1,14 @@
+
+> app@0.1.0 dev
+> next dev -p 3004
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3004
+
+ ✓ Starting...
+ ✓ Ready in 5.4s
+ ○ Compiling /book/[boutiqueSlug] ...
+ ✓ Compiled /book/[boutiqueSlug] in 6.3s (731 modules)
+ ✓ Compiled in 727ms (265 modules)
+ GET /book/novela 200 in 7857ms
+ GET /book/novela 200 in 73ms

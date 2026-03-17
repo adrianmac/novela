@@ -29,11 +29,14 @@ Module not found: Can't resolve './KanbanView'
  ✓ Compiled in 623ms (619 modules)
  ✓ Compiled in 477ms (275 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
-'react'[39m[33m;[39m[0m
-[0m [90m 4 |[39m [36mimport[39m { [33mKanbanSquare[39m[33m,[39m [33mList[39m[33m,[39m [33mFilter[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m[0m
-[0m[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m [33mKanbanView[39m [36mfrom[39m [32m'./KanbanView'[39m[33m;[39m[0m
-[0m [90m   |[39m [31m[1m^[22m[39m[0m
-[0m [90m 6 |[39m [36mimport[39m [33mListView[39m [36mfrom[39m [32m'./ListView'[39m[33m;[39m[0m
+ ✓ Compiled in 4.8s (880 modules)
+ ✓ Compiled in 2.4s (275 modules)
+ ✓ Compiled in 1044ms (275 modules)
+ ✓ Compiled in 576ms (275 modules)
+ ✓ Compiled in 464ms (275 modules)
+ ✓ Compiled in 655ms (275 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+m'./ListView'[39m[33m;[39m[0m
 [0m [90m 7 |[39m [36mimport[39m [33mJobDetailModal[39m [36mfrom[39m [32m'./JobDetailModal'[39m[33m;[39m[0m
 [0m [90m 8 |[39m [36mimport[39m { updateAlterationStatus } [36mfrom[39m [32m'./actions'[39m[33m;[39m[0m
 
@@ -707,3 +710,397 @@ digest: "2046091650"
  GET /dashboard/alterations 200 in 56ms
  GET /dashboard/alterations 200 in 81ms
  GET /dashboard/alterations 200 in 128ms
+ ✓ Compiled in 5.6s (1024 modules)
+ ✓ Compiled in 2.6s (501 modules)
+ ✓ Compiled in 972ms (501 modules)
+ ✓ Compiled in 604ms (501 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 530ms (501 modules)
+ ✓ Compiled in 602ms (501 modules)
+ ○ Compiling /book/[boutiqueSlug] ...
+ ✓ Compiled /book/[boutiqueSlug] in 2.3s (1206 modules)
+ ⨯ Error: Cannot find module './vendor-chunks/@swc.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/book/[boutiqueSlug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/static-paths-worker.js
+- /app/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/book/[boutiqueSlug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/app/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/book/novela'
+}
+ ⨯ Error: Cannot find module './682.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/book/[boutiqueSlug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/hot-middleware.js
+- /app/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /app/node_modules/next/dist/server/lib/router-server.js
+- /app/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (/app/.next/server/webpack-runtime.js:198:28)
+    at /app/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/app/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/app/.next/server/webpack-runtime.js:162:22)
+    at /app/.next/server/pages/_document.js:1:335
+    at Object.<anonymous> (/app/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (/app/node_modules/next/dist/server/require.js:109:84)
+    at /app/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/app/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/app/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/book/[boutiqueSlug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/app/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/app/node_modules/next/dist/server/lib/router-server.js',
+    '/app/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /book/novela 500 in 2987ms
+ ✓ Compiled /_not-found in 289ms (1209 modules)
+ GET /_next/static/chunks/fallback/main.js 404 in 544ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 550ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 548ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 556ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 552ms
+ ⨯ Error: Cannot find module './vendor-chunks/@swc.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/book/[boutiqueSlug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/static-paths-worker.js
+- /app/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/book/[boutiqueSlug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/app/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/book/novela'
+}
+ ⨯ Error: Cannot find module './682.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/_not-found/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/hot-middleware.js
+- /app/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /app/node_modules/next/dist/server/lib/router-server.js
+- /app/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (/app/.next/server/webpack-runtime.js:198:28)
+    at /app/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/app/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/app/.next/server/webpack-runtime.js:162:22)
+    at /app/.next/server/pages/_document.js:1:335
+    at Object.<anonymous> (/app/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (/app/node_modules/next/dist/server/require.js:109:84)
+    at /app/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/app/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/app/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/_not-found/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/app/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/app/node_modules/next/dist/server/lib/router-server.js',
+    '/app/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /book/novela 500 in 461ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 119ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 119ms
+ GET /_next/static/chunks/fallback/main.js 404 in 118ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 116ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 117ms
+ ⨯ Error: Cannot find module './vendor-chunks/@swc.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/book/[boutiqueSlug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/static-paths-worker.js
+- /app/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/book/[boutiqueSlug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/app/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/book/novela'
+}
+ ⨯ Error: Cannot find module './682.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/_not-found/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/hot-middleware.js
+- /app/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /app/node_modules/next/dist/server/lib/router-server.js
+- /app/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (/app/.next/server/webpack-runtime.js:198:28)
+    at /app/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/app/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/app/.next/server/webpack-runtime.js:162:22)
+    at /app/.next/server/pages/_document.js:1:335
+    at Object.<anonymous> (/app/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (/app/node_modules/next/dist/server/require.js:109:84)
+    at /app/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/app/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/app/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/_not-found/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/app/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/app/node_modules/next/dist/server/lib/router-server.js',
+    '/app/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /book/novela 500 in 401ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 111ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 115ms
+ GET /_next/static/chunks/fallback/main.js 404 in 109ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 109ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 109ms
+ ⨯ Error: Cannot find module './vendor-chunks/@swc.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/book/[boutiqueSlug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/static-paths-worker.js
+- /app/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/book/[boutiqueSlug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/app/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/book/novela'
+}
+ ⨯ Error: Cannot find module './682.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/_not-found/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/hot-middleware.js
+- /app/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /app/node_modules/next/dist/server/lib/router-server.js
+- /app/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (/app/.next/server/webpack-runtime.js:198:28)
+    at /app/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/app/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/app/.next/server/webpack-runtime.js:162:22)
+    at /app/.next/server/pages/_document.js:1:335
+    at Object.<anonymous> (/app/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (/app/node_modules/next/dist/server/require.js:109:84)
+    at /app/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/app/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/app/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/_not-found/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/app/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/app/node_modules/next/dist/server/lib/router-server.js',
+    '/app/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /book/novela 500 in 415ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 93ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 91ms
+ GET /_next/static/chunks/fallback/main.js 404 in 89ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 86ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 85ms
