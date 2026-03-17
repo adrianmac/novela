@@ -4,26 +4,706 @@
 
  ⚠ Port 3000 is in use, trying 3001 instead.
  ⚠ Port 3001 is in use, trying 3002 instead.
+ ⚠ Port 3002 is in use, trying 3003 instead.
   ▲ Next.js 14.2.35
-  - Local:        http://localhost:3002
+  - Local:        http://localhost:3003
 
  ✓ Starting...
- ✓ Ready in 2.7s
- ○ Compiling /dashboard/clients/new ...
- ✓ Compiled /dashboard/clients/new in 7.4s (741 modules)
- ✓ Compiled in 944ms (266 modules)
- GET /dashboard/clients/new 200 in 8409ms
- GET /dashboard/clients/new 200 in 79ms
- ✓ Compiled in 5.8s (448 modules)
- ✓ Compiled in 946ms (266 modules)
- ✓ Compiled in 1146ms (700 modules)
- ✓ Compiled in 490ms (266 modules)
- ○ Compiling /dashboard/inventory ...
- ✓ Compiled /dashboard/inventory in 2.5s (880 modules)
- GET /dashboard/inventory 200 in 3146ms
- GET /dashboard/inventory 200 in 82ms
- ✓ Compiled in 3.4s (894 modules)
- GET /dashboard/inventory 200 in 486ms
- POST /dashboard/inventory 200 in 600ms
- GET /dashboard/inventory 200 in 89ms
- POST /dashboard/inventory 200 in 21ms
+ ✓ Ready in 3.6s
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 10.9s (491 modules)
+ GET /dashboard/alterations 404 in 11378ms
+ ✓ Compiled in 376ms (242 modules)
+ ✓ Compiled in 1731ms (240 modules)
+ ✓ Compiled in 365ms (240 modules)
+ ○ Compiling /dashboard/alterations ...
+ ⨯ ./src/app/dashboard/alterations/AlterationsClient.tsx:5:1
+Module not found: Can't resolve './KanbanView'
+[0m [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mKanbanSquare[39m[33m,[39m [33mList[39m[33m,[39m [33mFilter[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m [33mKanbanView[39m [36mfrom[39m [32m'./KanbanView'[39m[33m;[39m[0m
+[0m [90m ✓ Compiled in 1056ms (275 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Compiled in 641ms (275 modules)
+ ✓ Compiled in 427ms (275 modules)
+ ✓ Compiled in 623ms (619 modules)
+ ✓ Compiled in 477ms (275 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+'react'[39m[33m;[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mKanbanSquare[39m[33m,[39m [33mList[39m[33m,[39m [33mFilter[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m [33mKanbanView[39m [36mfrom[39m [32m'./KanbanView'[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 6 |[39m [36mimport[39m [33mListView[39m [36mfrom[39m [32m'./ListView'[39m[33m;[39m[0m
+[0m [90m 7 |[39m [36mimport[39m [33mJobDetailModal[39m [36mfrom[39m [32m'./JobDetailModal'[39m[33m;[39m[0m
+[0m [90m 8 |[39m [36mimport[39m { updateAlterationStatus } [36mfrom[39m [32m'./actions'[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/dashboard/alterations/AlterationsClient.tsx:5:1
+Module not found: Can't resolve './KanbanView'
+[0m [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mKanbanSquare[39m[33m,[39m [33mList[39m[33m,[39m [33mFilter[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m [33mKanbanView[39m [36mfrom[39m [32m'./KanbanView'[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 6 |[39m [36mimport[39m [33mListView[39m [36mfrom[39m [32m'./ListView'[39m[33m;[39m[0m
+[0m [90m 7 |[39m [36mimport[39m [33mJobDetailModal[39m [36mfrom[39m [32m'./JobDetailModal'[39m[33m;[39m[0m
+[0m [90m 8 |[39m [36mimport[39m { updateAlterationStatus } [36mfrom[39m [32m'./actions'[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ GET /dashboard/alterations 500 in 9077ms
+ GET /dashboard/alterations 500 in 32ms
+ ✓ Compiled /_error in 2s (550 modules)
+ ⚠ ./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+ ○ Compiling /dashboard/alterations ...
+Failed to get alterations: TypeError: Cannot read properties of undefined (reading 'Symbol(drizzle:IsAlias)')
+    at getTableLikeName (webpack-internal:///(rsc)/./node_modules/drizzle-orm/utils.js:135:427)
+    at new PgSelectQueryBuilderBase (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:121:81)
+    at new PgSelectBase (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:779:1)
+    at PgSelectBuilder.from (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:83:12)
+    at getAlterations (webpack-internal:///(rsc)/./src/app/dashboard/alterations/actions.ts:33:12)
+    at AlterationsPage (webpack-internal:///(rsc)/./src/app/dashboard/alterations/page.tsx:17:80)
+    at eC (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265189)
+    at e (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269321)
+    at eL (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269809)
+    at eJ (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275773)
+    at eR (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266017)
+    at eC (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265059)
+    at e (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269321)
+    at eL (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269809)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267040
+    at Array.toJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267504)
+    at stringify (<anonymous>)
+    at eJ (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275872)
+    at eV (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:276390)
+    at Timeout._onTimeout (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266177)
+    at listOnTimeout (node:internal/timers:585:17)
+    at process.processTimers (node:internal/timers:521:7)
+ ⨯ src/app/dashboard/alterations/actions.ts (58:11) @ getAlterations
+ ⨯ Error: Failed to fetch alteration jobs
+    at getAlterations (./src/app/dashboard/alterations/actions.ts:50:15)
+    at AlterationsPage (./src/app/dashboard/alterations/page.tsx:17:80)
+    at stringify (<anonymous>)
+digest: "3125367558"
+[0m [90m 56 |[39m   } [36mcatch[39m (error) {[0m
+[0m [90m 57 |[39m     console[33m.[39merror([32m'Failed to get alterations:'[39m[33m,[39m error)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 58 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to fetch alteration jobs'[39m)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 59 |[39m   }[0m
+[0m [90m 60 |[39m }[0m
+[0m [90m 61 |[39m[0m
+ ⨯ src/app/dashboard/alterations/actions.ts (58:11) @ getAlterations
+ ⨯ Error: Failed to fetch alteration jobs
+    at getAlterations (./src/app/dashboard/alterations/actions.ts:50:15)
+    at AlterationsPage (./src/app/dashboard/alterations/page.tsx:17:80)
+    at stringify (<anonymous>)
+digest: "3125367558"
+[0m [90m 56 |[39m   } [36mcatch[39m (error) {[0m
+[0m [90m 57 |[39m     console[33m.[39merror([32m'Failed to get alterations:'[39m[33m,[39m error)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 58 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to fetch alteration jobs'[39m)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 59 |[39m   }[0m
+[0m [90m 60 |[39m }[0m
+[0m [90m 61 |[39m[0m
+ GET /dashboard/alterations 200 in 908ms
+Failed to get alterations: TypeError: Cannot read properties of undefined (reading 'Symbol(drizzle:IsAlias)')
+    at getTableLikeName (webpack-internal:///(rsc)/./node_modules/drizzle-orm/utils.js:135:427)
+    at new PgSelectQueryBuilderBase (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:121:81)
+    at new PgSelectBase (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:779:1)
+    at PgSelectBuilder.from (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:83:12)
+    at getAlterations (webpack-internal:///(rsc)/./src/app/dashboard/alterations/actions.ts:33:12)
+    at AlterationsPage (webpack-internal:///(rsc)/./src/app/dashboard/alterations/page.tsx:17:80)
+    at eC (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265189)
+    at e (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269321)
+    at eL (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269809)
+    at eJ (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275773)
+    at eR (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266017)
+    at eC (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265059)
+    at e (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269321)
+    at eL (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269809)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267040
+    at Array.toJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267504)
+    at stringify (<anonymous>)
+    at eJ (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275872)
+    at eV (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:276390)
+    at Timeout._onTimeout (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266177)
+    at listOnTimeout (node:internal/timers:585:17)
+    at process.processTimers (node:internal/timers:521:7)
+ ⨯ src/app/dashboard/alterations/actions.ts (58:11) @ getAlterations
+ ⨯ Error: Failed to fetch alteration jobs
+    at getAlterations (./src/app/dashboard/alterations/actions.ts:50:15)
+    at AlterationsPage (./src/app/dashboard/alterations/page.tsx:17:80)
+    at stringify (<anonymous>)
+digest: "3125367558"
+[0m [90m 56 |[39m   } [36mcatch[39m (error) {[0m
+[0m [90m 57 |[39m     console[33m.[39merror([32m'Failed to get alterations:'[39m[33m,[39m error)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 58 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to fetch alteration jobs'[39m)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 59 |[39m   }[0m
+[0m [90m 60 |[39m }[0m
+[0m [90m 61 |[39m[0m
+ ⨯ src/app/dashboard/alterations/actions.ts (58:11) @ getAlterations
+ ⨯ Error: Failed to fetch alteration jobs
+    at getAlterations (./src/app/dashboard/alterations/actions.ts:50:15)
+    at AlterationsPage (./src/app/dashboard/alterations/page.tsx:17:80)
+    at stringify (<anonymous>)
+digest: "3125367558"
+[0m [90m 56 |[39m   } [36mcatch[39m (error) {[0m
+[0m [90m 57 |[39m     console[33m.[39merror([32m'Failed to get alterations:'[39m[33m,[39m error)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 58 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to fetch alteration jobs'[39m)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 59 |[39m   }[0m
+[0m [90m 60 |[39m }[0m
+[0m [90m 61 |[39m[0m
+ GET /dashboard/alterations 200 in 63ms
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ⚠ ./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+ ⚠ ./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationItems' is not exported from '@/db/schema' (imported as 'alterationItems').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+
+./src/app/dashboard/alterations/actions.ts
+Attempted import error: 'alterationJobs' is not exported from '@/db/schema' (imported as 'alterationJobs').
+
+Import trace for requested module:
+./src/app/dashboard/alterations/actions.ts
+./src/app/dashboard/alterations/page.tsx
+Failed to get alterations: TypeError: Cannot read properties of undefined (reading 'Symbol(drizzle:IsAlias)')
+    at getTableLikeName (webpack-internal:///(rsc)/./node_modules/drizzle-orm/utils.js:135:427)
+    at new PgSelectQueryBuilderBase (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:121:81)
+    at new PgSelectBase (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:779:1)
+    at PgSelectBuilder.from (webpack-internal:///(rsc)/./node_modules/drizzle-orm/pg-core/query-builders/select.js:83:12)
+    at getAlterations (webpack-internal:///(rsc)/./src/app/dashboard/alterations/actions.ts:32:12)
+    at AlterationsPage (webpack-internal:///(rsc)/./src/app/dashboard/alterations/page.tsx:17:80)
+    at eC (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265189)
+    at e (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269321)
+    at eL (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269809)
+    at eJ (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275773)
+    at eR (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266017)
+    at eC (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265059)
+    at e (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269321)
+    at eL (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:269809)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267040
+    at Array.toJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267504)
+    at stringify (<anonymous>)
+    at eJ (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275872)
+    at eV (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:276390)
+    at Timeout._onTimeout (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266177)
+    at listOnTimeout (node:internal/timers:585:17)
+    at process.processTimers (node:internal/timers:521:7)
+ ⨯ src/app/dashboard/alterations/actions.ts (62:11) @ getAlterations
+ ⨯ Error: Failed to fetch alteration jobs
+    at getAlterations (./src/app/dashboard/alterations/actions.ts:54:15)
+    at AlterationsPage (./src/app/dashboard/alterations/page.tsx:17:80)
+    at stringify (<anonymous>)
+digest: "2046091650"
+[0m [90m 60 |[39m   } [36mcatch[39m (error) {[0m
+[0m [90m 61 |[39m     console[33m.[39merror([32m'Failed to get alterations:'[39m[33m,[39m error)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 62 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to fetch alteration jobs'[39m)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 63 |[39m   }[0m
+[0m [90m 64 |[39m }[0m
+[0m [90m 65 |[39m[0m
+ ⨯ src/app/dashboard/alterations/actions.ts (62:11) @ getAlterations
+ ⨯ Error: Failed to fetch alteration jobs
+    at getAlterations (./src/app/dashboard/alterations/actions.ts:54:15)
+    at AlterationsPage (./src/app/dashboard/alterations/page.tsx:17:80)
+    at stringify (<anonymous>)
+digest: "2046091650"
+[0m [90m 60 |[39m   } [36mcatch[39m (error) {[0m
+[0m [90m 61 |[39m     console[33m.[39merror([32m'Failed to get alterations:'[39m[33m,[39m error)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 62 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to fetch alteration jobs'[39m)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 63 |[39m   }[0m
+[0m [90m 64 |[39m }[0m
+[0m [90m 65 |[39m[0m
+ GET /dashboard/alterations 200 in 350ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled /dashboard/alterations in 848ms (537 modules)
+ GET /dashboard/alterations 200 in 301ms
+ ✓ Compiled in 936ms (1038 modules)
+ GET /dashboard/alterations 200 in 166ms
+ GET /dashboard/alterations 200 in 66ms
+ GET /dashboard/alterations 200 in 56ms
+ GET /dashboard/alterations 200 in 81ms
+ GET /dashboard/alterations 200 in 128ms

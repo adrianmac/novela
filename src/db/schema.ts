@@ -93,3 +93,28 @@ export const inventoryRentals = pgTable('inventory_rentals', {
   returnedAt: timestamp('returned_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const alterationJobs = pgTable('alteration_jobs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  eventId: uuid('event_id').references(() => events.id).notNull(),
+  clientId: uuid('client_id').references(() => clients.id).notNull(),
+  inventoryItemId: uuid('inventory_item_id').references(() => inventory.id), // Optional, if they are altering a rented dress
+  garmentDescription: text('garment_description').notNull(),
+  status: text('status').notNull().default('measurement_needed'), // measurement_needed, in_progress, fitting_scheduled, complete
+  seamstressId: text('seamstress_id'),
+  seamstressName: text('seamstress_name'),
+  measurementsJson: text('measurements_json'), // Storing as JSON string: Bust, Waist, Hips, Height, etc.
+  notes: text('notes'),
+  totalEstimatedPrice: integer('total_estimated_price').notNull().default(0), // in cents
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const alterationItems = pgTable('alteration_items', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  jobId: uuid('job_id').references(() => alterationJobs.id).notNull(),
+  taskName: text('task_name').notNull(), // Hem, Bustle, Take in waist, Let out, Custom...
+  description: text('description'),
+  estimatedPrice: integer('estimated_price').notNull().default(0), // in cents
+  isCompleted: integer('is_completed').notNull().default(0), // 0 or 1 for boolean
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});

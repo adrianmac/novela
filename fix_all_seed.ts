@@ -1,7 +1,6 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as schema from './schema';
-
+import * as schema from './src/db/schema';
 
 const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres';
 
@@ -13,6 +12,7 @@ async function seed() {
   await db.delete(schema.alterationItems);
   await db.delete(schema.alterationJobs);
   await db.delete(schema.inventoryRentals);
+  await db.delete(schema.inventory);
   await db.delete(schema.tasks);
   await db.delete(schema.payments);
   await db.delete(schema.appointments);
@@ -20,7 +20,7 @@ async function seed() {
   await db.delete(schema.events);
   await db.delete(schema.clients);
 
-  console.log('Seeding database...');
+  console.log('Seeding clients & events...');
   const [client1] = await db.insert(schema.clients).values({
     firstName: 'Jessica',
     lastName: 'Mark',
@@ -60,9 +60,6 @@ async function seed() {
     { eventId: event1.id, title: 'Confirm floral order', status: 'completed', dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
   ]);
 
-  console.log('Seeded successfully.');
-
-  // Create another event for calendar
   const [client2] = await db.insert(schema.clients).values({
     firstName: 'Ana',
     lastName: 'Gomez',
@@ -70,21 +67,13 @@ async function seed() {
     phone: '(555) 987-6543',
   }).returning();
 
-  await db.insert(schema.events).values({
+  const [event2] = await db.insert(schema.events).values({
     clientId: client2.id,
     type: 'quinceanera',
     date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'active',
     totalValue: 350000,
   }).returning();
-}
-
-seed().catch(console.error).finally(() => process.exit(0));
-
-async function seedInventory() {
-  console.log('Clearing inventory...');
-  await db.delete(schema.inventoryRentals);
-  await db.delete(schema.inventory);
 
   console.log('Seeding inventory...');
   const [dress1] = await db.insert(schema.inventory).values({
@@ -147,81 +136,67 @@ async function seedInventory() {
     lastCleanedDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
   }).returning();
 
-  // Create rentals
-  const eventsList = await db.select().from(schema.events);
-  if (eventsList.length > 0) {
-    await db.insert(schema.inventoryRentals).values({
-      eventId: eventsList[0].id,
-      itemId: dress2.id,
-      status: 'reserved',
-      pickupDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-      returnDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
-    });
+  await db.insert(schema.inventoryRentals).values({
+    eventId: event1.id,
+    itemId: dress2.id,
+    status: 'reserved',
+    pickupDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+    returnDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+  });
 
-    await db.insert(schema.inventoryRentals).values({
-      eventId: eventsList[0].id,
-      itemId: qDress.id,
-      status: 'rented',
-      pickupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      returnDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
-    });
+  await db.insert(schema.inventoryRentals).values({
+    eventId: event1.id,
+    itemId: qDress.id,
+    status: 'rented',
+    pickupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    returnDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+  });
 
-    await db.insert(schema.inventoryRentals).values({
-      eventId: eventsList[0].id,
-      itemId: dressOverdue.id,
-      status: 'overdue',
-      pickupDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      returnDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    });
-  }
-}
+  await db.insert(schema.inventoryRentals).values({
+    eventId: event1.id,
+    itemId: dressOverdue.id,
+    status: 'overdue',
+    pickupDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    returnDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  });
 
-seedInventory().catch(console.error).finally(() => process.exit(0));
-
-// Add alteration seeding logic
-async function seedAlterations() {
-  const allEvents = await db.select().from(schema.events);
-  const allClients = await db.select().from(schema.clients);
-  const allInventory = await db.select().from(schema.inventory);
-
-  if (allEvents.length === 0 || allClients.length === 0) return;
-
+  console.log('Seeding alterations...');
   const sampleJobs = [
     {
-      eventId: allEvents[0].id,
-      clientId: allEvents[0].clientId,
-      inventoryItemId: allInventory[0].id,
-      garmentDescription: allInventory[0].name,
-      status: 'measurement_needed',
+      eventId: event1.id,
+      clientId: event1.clientId,
+      inventoryItemId: dress1.id,
+      garmentDescription: dress1.name,
+      status: 'measurement_needed' as const,
       seamstressName: 'Maria G.',
       notes: 'Client wants a dramatic bustle.',
       totalEstimatedPrice: 15000,
     },
     {
-      eventId: allEvents[1].id,
-      clientId: allEvents[1].clientId,
-      inventoryItemId: allInventory[1].id,
-      garmentDescription: allInventory[1].name,
-      status: 'in_progress',
+      eventId: event2.id,
+      clientId: event2.clientId,
+      inventoryItemId: dress2.id,
+      garmentDescription: dress2.name,
+      status: 'in_progress' as const,
       seamstressName: 'Elena V.',
       notes: 'Hem needs to be brought up 2 inches.',
       totalEstimatedPrice: 8500,
     },
     {
-      eventId: allEvents[2].id,
-      clientId: allEvents[2].clientId,
+      eventId: event1.id,
+      clientId: event1.clientId,
       garmentDescription: 'Custom Quinceanera Dress',
-      status: 'fitting_scheduled',
+      status: 'fitting_scheduled' as const,
       seamstressName: 'Elena V.',
       measurementsJson: JSON.stringify({ Bust: '34', Waist: '26', Hips: '36', Height: '65', 'Desired dress length': '58', 'Shoulder width': '15', 'Sleeve length': '22' }),
       notes: 'Second fitting scheduled.',
       totalEstimatedPrice: 20000,
     },
     {
-      eventId: allEvents[3].id,
-      clientId: allEvents[3].clientId,
+      eventId: event2.id,
+      clientId: event2.clientId,
       garmentDescription: 'Bridesmaid Dress (Pink)',
-      status: 'complete',
+      status: 'complete' as const,
       seamstressName: 'Maria G.',
       notes: 'Ready for pickup.',
       totalEstimatedPrice: 5000,
@@ -237,11 +212,11 @@ async function seedAlterations() {
       { jobId: insertedJob.id, taskName: 'Bustle', description: 'Add 3-point over-bustle', estimatedPrice: job.totalEstimatedPrice - 5000, isCompleted: job.status === 'complete' ? 1 : 0 },
     ]);
   }
+
+  console.log('Seed complete.');
 }
 
-
-seedAlterations().then(() => {
-  console.log("Alterations seeded");
+seed().then(() => {
   process.exit(0);
 }).catch(e => {
   console.error(e);
