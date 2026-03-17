@@ -4,7 +4,7 @@ import { inventory, inventoryRentals, events, clients } from "@/db/schema";
 import { eq, sql, desc } from "drizzle-orm";
 import InventoryClient from './InventoryClient';
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function InventoryPage() {
   // Fetch all inventory items

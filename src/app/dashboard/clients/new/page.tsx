@@ -1,6 +1,8 @@
 import IntakeForm from './IntakeForm';
 import { getAvailableStaff } from './actions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NewClientPage() {
   const staff = await getAvailableStaff();
 

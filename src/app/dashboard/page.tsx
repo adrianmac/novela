@@ -13,7 +13,7 @@ import { db } from '@/db';
 import { events, appointments, payments, clients, inventoryRentals, alterationJobs, tasks, inventory } from '@/db/schema';
 import { eq, or, and, lt, lte, gt, gte, sql, desc, asc, ne, isNull } from 'drizzle-orm';
 
-export const revalidate = 0; // Don't cache for this mock purpose
+export const dynamic = 'force-dynamic'; // Don't cache for this mock purpose
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
