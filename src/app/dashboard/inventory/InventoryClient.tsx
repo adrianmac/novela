@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Search, Filter, Plus, Image as ImageIcon, CheckCircle2, AlertTriangle, Clock, RotateCcw } from 'lucide-react';
-import { addInventoryItem, reserveItem, markItemStatus, logReturn, searchEvents } from './actions';
+import { addInventoryItem, reserveItem, markItemStatus, logReturn, searchEvents, checkDressAvailability } from './actions';
 
 export default function InventoryClient({ initialItems }: { initialItems: any[] }) {
   const [items, setItems] = useState(initialItems);
@@ -25,6 +25,8 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
   const [reserveDates, setReserveDates] = useState({ pickup: '', return: '' });
   const [isReserving, setIsReserving] = useState(false);
   const [reserveError, setReserveError] = useState('');
+  const [availabilityCheck, setAvailabilityCheck] = useState<any>(null);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
   // Return State
   const [returnModalOpen, setReturnModalOpen] = useState<{item: any} | null>(null);
@@ -107,8 +109,29 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
       pickup: pDate.toISOString().split('T')[0],
       return: rDate.toISOString().split('T')[0]
     });
-    setEventSearch('');
   };
+
+  useEffect(() => {
+    async function checkAvailability() {
+      if (reserveModalOpen && selectedEvent && reserveDates.pickup && reserveDates.return) {
+        setIsCheckingAvailability(true);
+        setAvailabilityCheck(null);
+        try {
+          const res = await checkDressAvailability(reserveModalOpen.item.id, reserveDates.pickup, reserveDates.return);
+          setAvailabilityCheck(res);
+        } catch (e) {
+          console.error("Failed to check availability", e);
+        }
+        setIsCheckingAvailability(false);
+      } else {
+        setAvailabilityCheck(null);
+      }
+    }
+
+    // Add small debounce
+    const timeout = setTimeout(checkAvailability, 500);
+    return () => clearTimeout(timeout);
+  }, [reserveDates.pickup, reserveDates.return, selectedEvent, reserveModalOpen]);
 
   const handleReturn = async () => {
     if (!returnModalOpen?.item?.activeRental) return;
@@ -387,14 +410,64 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                   </div>
                 </div>
 
-                {reserveError && <div className="text-red-600 bg-red-50 p-3 rounded-lg text-sm font-semibold border border-red-200">{reserveError}</div>}
+                <div className="mt-4">
+                  {isCheckingAvailability ? (
+                    <div className="flex items-center gap-2 text-rose-600 text-sm font-medium">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-rose-600"></div>
+                      Checking availability...
+                    </div>
+                  ) : availabilityCheck ? (
+                    availabilityCheck.available ? (
+                      <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 p-3 rounded-lg border border-emerald-200 text-sm font-semibold">
+                        <CheckCircle2 className="w-5 h-5" />
+                        This dress is available for your dates
+                      </div>
+                    ) : (
+                      <div className="text-red-800 bg-red-50 p-4 rounded-lg border border-red-200 text-sm">
+                        <div className="font-bold flex items-center gap-2 mb-2">
+                          <AlertTriangle className="w-5 h-5 text-red-600" />
+                          Unavailable
+                        </div>
+                        {availabilityCheck.conflicts.map((c: any, i: number) => (
+                          <div key={i} className="mb-3 font-medium text-red-700/80">
+                            This dress is already reserved from {new Date(c.pickupDate).toLocaleDateString()} to {new Date(c.returnDate).toLocaleDateString()} for {c.clientName}.
+                          </div>
+                        ))}
+
+                        {availabilityCheck.alternatives && availabilityCheck.alternatives.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-red-200/50">
+                            <div className="font-bold mb-2 text-red-900">Suggested alternatives:</div>
+                            <div className="space-y-2">
+                              {availabilityCheck.alternatives.map((alt: any) => (
+                                <div key={alt.id} className="flex justify-between items-center bg-white p-2 rounded border border-red-100 shadow-sm">
+                                  <div>
+                                    <div className="font-bold text-gray-900 text-xs">{alt.sku} - {alt.name}</div>
+                                    <div className="text-[10px] text-gray-500">{alt.size} • {alt.category}</div>
+                                  </div>
+                                  <button onClick={() => {
+                                      setReserveModalOpen({item: alt});
+                                      setAvailabilityCheck(null);
+                                    }} className="text-xs bg-rose-100 hover:bg-rose-200 text-rose-900 px-3 py-1.5 rounded-lg font-bold transition-colors">
+                                    Select
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  ) : null}
+                </div>
+
+                {reserveError && <div className="text-red-600 bg-red-50 p-3 rounded-lg text-sm font-semibold border border-red-200 mt-4">{reserveError}</div>}
               </div>
             )}
 
             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-rose-50">
-              <button onClick={() => {setReserveModalOpen(null); setSelectedEvent(null); setEventSearch(''); setReserveError('');}} className="h-13 sm:h-11 px-4 text-gray-500 font-bold hover:bg-gray-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
+              <button onClick={() => {setReserveModalOpen(null); setSelectedEvent(null); setEventSearch(''); setReserveError(''); setAvailabilityCheck(null);}} className="h-13 sm:h-11 px-4 text-gray-500 font-bold hover:bg-gray-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
               {selectedEvent && (
-                <button onClick={handleReserve} disabled={isReserving} className="h-13 sm:h-11 px-6 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
+                <button onClick={handleReserve} disabled={isReserving || isCheckingAvailability || (availabilityCheck && !availabilityCheck.available)} className="h-13 sm:h-11 px-6 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
                   {isReserving ? 'Reserving...' : 'Confirm Reservation'}
                 </button>
               )}
