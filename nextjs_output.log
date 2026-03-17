@@ -1,14 +1,135 @@
 
 > app@0.1.0 dev
-> next dev -p 3004
+> next dev -p 3005
 
   ▲ Next.js 14.2.35
-  - Local:        http://localhost:3004
+  - Local:        http://localhost:3005
 
  ✓ Starting...
- ✓ Ready in 5.4s
- ○ Compiling /book/[boutiqueSlug] ...
- ✓ Compiled /book/[boutiqueSlug] in 6.3s (731 modules)
- ✓ Compiled in 727ms (265 modules)
- GET /book/novela 200 in 7857ms
- GET /book/novela 200 in 73ms
+ ✓ Ready in 3.6s
+ ○ Compiling /dashboard/staff/schedule ...
+ ✓ Compiled /dashboard/staff/schedule in 7.7s (742 modules)
+ ✓ Compiled in 967ms (266 modules)
+ GET /dashboard/staff/schedule 200 in 8818ms
+ ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+Error:
+  [31mx[0m Expression expected
+     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:418:1]
+ [2m418[0m | }
+ [2m419[0m |
+ [2m420[0m | v>
+ [2m421[0m |   );
+     : [31;1m  ^[0m
+ [2m422[0m | }
+ [2m423[0m |
+ [2m424[0m | // Append Appointment Detail Modal functionality
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+ ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+Error:
+  [31mx[0m Expected '}', got '<eof>'
+     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:462:1]
+ [2m462[0m |       </div>
+ [2m463[0m |     </div>
+ [2m464[0m |   );
+ [2m465[0m | }
+     : [31;1m^[0m
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+ ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+Error:
+  [31mx[0m Expected '}', got '<eof>'
+     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:462:1]
+ [2m462[0m |       </div>
+ [2m463[0m |     </div>
+ [2m464[0m |   );
+ [2m465[0m | }
+     : [31;1m^[0m
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+Error:
+  [31mx[0m Expected '}', got '<eof>'
+     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:461:1]
+ [2m461[0m |       </div>
+ [2m462[0m |     </div>
+ [2m463[0m |   );
+ [2m464[0m | }
+     : [31;1m^[0m
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+ ✓ Compiled in 3.3s (268 modules)
+ ✓ Compiled in 1154ms (268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+cheduleClient.tsx[0m:462:1]
+ [2m462[0m |       </div>
+ [2m463[0m |     </div>
+ [2m464[0m |   );
+ [2m465[0m | }
+     : [31;1m^[0m
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+Error:
+  [31mx[0m Expected '}', got '<eof>'
+     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:462:1]
+ [2m462[0m |       </div>
+ [2m463[0m |     </div>
+ [2m464[0m |   );
+ [2m465[0m | }
+     : [31;1m^[0m
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+Error:
+  [31mx[0m Expected '}', got '<eof>'
+     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:461:1]
+ [2m461[0m |       </div>
+ [2m462[0m |     </div>
+ [2m463[0m |   );
+ [2m464[0m | }
+     : [31;1m^[0m
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+ ✓ Compiled in 3.4s (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 1107ms (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
