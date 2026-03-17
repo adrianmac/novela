@@ -1,3 +1,4 @@
+import { PaymentProgress } from "@/components/ui/PaymentProgress";
 import React from 'react';
 import {
   ChevronRight, Plus, AlertTriangle, CheckCircle2
@@ -133,20 +134,12 @@ export default async function EventDetail({ params }: { params: { eventId: strin
             )}>Days left</span>
           </div>
 
-          <div className="min-w-[140px] sm:min-w-[180px] flex flex-col justify-center">
-             <div className="flex justify-between items-end mb-2">
-               <span className="text-xs font-semibold uppercase tracking-widest text-rose-700/70">Paid</span>
-               <span className="text-sm font-bold font-mono text-emerald-700">${(totalCollected/100).toLocaleString()}</span>
-             </div>
-             <div className="w-full bg-rose-100 h-2.5 rounded-full overflow-hidden shadow-inner">
-               <div
-                 className="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out"
-                 style={{ width: `${progressPercent}%` }}
-               ></div>
-             </div>
-             <div className="mt-2 text-right">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">of ${(totalFinancials/100).toLocaleString()}</span>
-             </div>
+          <div className="min-w-[140px] sm:min-w-[220px] flex flex-col justify-center">
+             <PaymentProgress
+                totalAmount={totalFinancials}
+                paidAmount={totalCollected}
+                milestones={paymentsRows}
+             />
           </div>
         </div>
       </section>
