@@ -1,0 +1,13 @@
+
+> app@0.1.0 dev
+> next dev -p 3009
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3009
+
+ ✓ Starting...
+ ✓ Ready in 1879ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 5.6s (719 modules)
+ ✓ Compiled in 670ms (262 modules)
+ GET /dashboard 200 in 6419ms

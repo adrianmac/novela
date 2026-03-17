@@ -82,54 +82,141 @@ Import trace for requested module:
  ✓ Compiled in 3.3s (268 modules)
  ✓ Compiled in 1154ms (268 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
-cheduleClient.tsx[0m:462:1]
- [2m462[0m |       </div>
- [2m463[0m |     </div>
- [2m464[0m |   );
- [2m465[0m | }
-     : [31;1m^[0m
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/app/dashboard/staff/schedule/ScheduleClient.tsx
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
- ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
-Error:
-  [31mx[0m Expected '}', got '<eof>'
-     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:462:1]
- [2m462[0m |       </div>
- [2m463[0m |     </div>
- [2m464[0m |   );
- [2m465[0m | }
-     : [31;1m^[0m
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/app/dashboard/staff/schedule/ScheduleClient.tsx
+ ✓ Compiled in 26s (268 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
- ⨯ ./src/app/dashboard/staff/schedule/ScheduleClient.tsx
-Error:
-  [31mx[0m Expected '}', got '<eof>'
-     ,-[[36;1;4m/app/src/app/dashboard/staff/schedule/ScheduleClient.tsx[0m:461:1]
- [2m461[0m |       </div>
- [2m462[0m |     </div>
- [2m463[0m |   );
- [2m464[0m | }
-     : [31;1m^[0m
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/app/dashboard/staff/schedule/ScheduleClient.tsx
- ✓ Compiled in 3.4s (278 modules)
+ ✓ Compiled in 2.1s (268 modules)
+ ✓ Compiled in 1214ms (268 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
- ✓ Compiled in 1107ms (278 modules)
+ ✓ Compiled in 16.5s (268 modules)
+ ✓ Compiled in 2.2s (268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/app/dashboard/staff/schedule/page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/dashboard/staff/schedule/page' in /app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/app/.next/server/app/dashboard/staff/schedule/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/dashboard/staff/schedule/page' in '/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/dashboard/staff/schedule/page (expected /app/.next/server/app/dashboard/staff/schedule/page.js)
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/entries.js
+<w>  at file /app/node_modules/next/dist/build/entries.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+ ✓ Compiled in 2.3s (268 modules)
+ ✓ Compiled in 1764ms (268 modules)
+ ✓ Compiled in 1327ms (268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 1178ms (268 modules)
+ ✓ Compiled in 1111ms (268 modules)
+pendencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/entries.js
+<w>  at file /app/node_modules/next/dist/build/entries.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/app/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /app/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/entries.js
+<w>  at file /app/node_modules/next/dist/build/entries.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/book/[boutiqueSlug]/page' in /app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/app/.next/server/app/book/[boutiqueSlug]/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/book/[boutiqueSlug]/page' in '/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/book/[boutiqueSlug]/page (expected /app/.next/server/app/book/[boutiqueSlug]/page.js)
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/entries.js
+<w>  at file /app/node_modules/next/dist/build/entries.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file /app/node_modules/next/dist/build/webpack-config.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+ ✓ Compiled in 1739ms (278 modules)
+ ✓ Compiled in 2.1s (278 modules)
+ ✓ Compiled in 1424ms (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 1285ms (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 1072ms (278 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'

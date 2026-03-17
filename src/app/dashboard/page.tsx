@@ -9,8 +9,8 @@ import Link from 'next/link';
 
 // Database
 import { db } from '@/db';
-import { events, appointments, payments, clients } from '@/db/schema';
-import { eq, or, and, lt, gte, sql, desc, asc } from 'drizzle-orm';
+import { events, appointments, payments, clients, inventoryRentals, alterationJobs, tasks, inventory } from '@/db/schema';
+import { eq, or, and, lt, lte, gt, gte, sql, desc, asc, ne, isNull } from 'drizzle-orm';
 
 export const revalidate = 0; // Don't cache for this mock purpose
 
@@ -36,6 +36,256 @@ function StatCard({ label, value, trend, isCurrency = false }: { label: string, 
   );
 }
 
+
+async function getHighestPriorityAlert() {
+  const now = new Date();
+  const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const in7Days = new Date(todayDate); in7Days.setDate(in7Days.getDate() + 7);
+  const in14Days = new Date(todayDate); in14Days.setDate(in14Days.getDate() + 14);
+  const in30Days = new Date(todayDate); in30Days.setDate(in30Days.getDate() + 30);
+  const ago60Days = new Date(todayDate); ago60Days.setDate(ago60Days.getDate() - 60);
+
+  // Helper to calculate days diff
+  const getDaysDiff = (d1: Date, d2: Date) => Math.ceil(Math.abs(d1.getTime() - d2.getTime()) / (1000 * 3600 * 24));
+
+  // 1. Priority 1: CRITICAL Event <= 7 days AND has overdue payment
+  const p1_events = await db.select({
+      eventId: events.id,
+      firstName: clients.firstName,
+      lastName: clients.lastName,
+      eventDate: events.date,
+      amount: payments.amount,
+      milestone: payments.milestone
+    })
+    .from(events)
+    .innerJoin(clients, eq(events.clientId, clients.id))
+    .innerJoin(payments, eq(events.id, payments.eventId))
+    .where(
+      and(
+        lte(events.date, in7Days.toISOString().split('T')[0]),
+        gte(events.date, todayDate.toISOString().split('T')[0]),
+        eq(payments.status, 'overdue')
+      )
+    )
+    .limit(1);
+
+  if (p1_events.length > 0) {
+    const e = p1_events[0];
+    const clientName = e.firstName + ' ' + e.lastName;
+    const days = getDaysDiff(new Date(e.eventDate), todayDate);
+    return {
+      message: `${clientName} wedding is in ${days} days — \$${(e.amount / 100).toFixed(2)} ${e.milestone} is overdue`,
+      action: 'Collect payment →',
+      href: `/dashboard/events/${e.eventId}`,
+      level: 'critical'
+    };
+  }
+
+  // 2. Priority 2: CRITICAL Event <= 14 days AND has incomplete alteration_job AND NO completed 'final_fitting' appointment
+  const p2_events = await db.select({
+      eventId: events.id,
+      firstName: clients.firstName,
+      lastName: clients.lastName,
+      eventDate: events.date
+    })
+    .from(events)
+    .innerJoin(clients, eq(events.clientId, clients.id))
+    .innerJoin(alterationJobs, eq(events.id, alterationJobs.eventId))
+    .where(
+      and(
+        lte(events.date, in14Days.toISOString().split('T')[0]),
+        gte(events.date, todayDate.toISOString().split('T')[0]),
+        ne(alterationJobs.status, 'complete')
+      )
+    );
+
+  for (const e of p2_events) {
+    const finalFittings = await db.select().from(appointments).where(
+      and(
+        eq(appointments.eventId, e.eventId),
+        eq(appointments.type, 'final_fitting'),
+        eq(appointments.status, 'completed')
+      )
+    );
+    if (finalFittings.length === 0) {
+      const clientName = e.firstName + ' ' + e.lastName;
+      const days = getDaysDiff(new Date(e.eventDate), todayDate);
+      return {
+        message: `${clientName}'s final fitting is not scheduled (event in ${days} days)`,
+        action: 'Schedule now →',
+        href: `/dashboard/staff/schedule`,
+        level: 'critical'
+      };
+    }
+  }
+
+  // 3. Priority 3: HIGH rental_record with status='rented' AND return_date < today
+  const p3_rentals = await db.select({
+      sku: inventory.sku,
+      firstName: clients.firstName,
+      lastName: clients.lastName,
+      returnDate: inventoryRentals.returnDate,
+      clientId: events.clientId
+    })
+    .from(inventoryRentals)
+    .innerJoin(inventory, eq(inventoryRentals.itemId, inventory.id))
+    .innerJoin(events, eq(inventoryRentals.eventId, events.id))
+    .innerJoin(clients, eq(events.clientId, clients.id))
+    .where(
+      and(
+        eq(inventoryRentals.status, 'rented'),
+        lt(inventoryRentals.returnDate, todayDate.toISOString().split('T')[0])
+      )
+    )
+    .limit(1);
+
+  if (p3_rentals.length > 0) {
+    const r = p3_rentals[0];
+    const clientName = r.firstName + ' ' + r.lastName;
+    const rDate = new Date(r.returnDate);
+    const days = getDaysDiff(todayDate, rDate);
+    return {
+      message: `Gown ${r.sku} rented to ${clientName} is ${days} days overdue for return`,
+      action: 'Contact client →',
+      href: `/dashboard/inventory`,
+      level: 'high'
+    };
+  }
+
+  // 4. Priority 4: HIGH payment_milestone with status='overdue' AND (today - due_date) >= 3 days
+  const ago3DaysStr = new Date(todayDate.getTime() - 3 * 24 * 3600 * 1000).toISOString().split('T')[0];
+  const p4_payments = await db.select({
+      firstName: clients.firstName,
+      lastName: clients.lastName,
+      milestone: payments.milestone,
+      amount: payments.amount,
+      dueDate: payments.dueDate,
+      eventId: payments.eventId
+    })
+    .from(payments)
+    .innerJoin(events, eq(payments.eventId, events.id))
+    .innerJoin(clients, eq(events.clientId, clients.id))
+    .where(
+      and(
+        eq(payments.status, 'overdue'),
+        lte(payments.dueDate, ago3DaysStr)
+      )
+    )
+    .limit(1);
+
+  if (p4_payments.length > 0) {
+    const p = p4_payments[0];
+    const clientName = p.firstName + ' ' + p.lastName;
+    const dDate = new Date(p.dueDate);
+    const days = getDaysDiff(todayDate, dDate);
+    return {
+      message: `${clientName} — ${p.milestone} is ${days} days overdue (${(p.amount / 100).toFixed(2)})`,
+      action: 'Send reminder →',
+      href: `/dashboard/events/${p.eventId}`,
+      level: 'high'
+    };
+  }
+
+  // 5. Priority 5: MEDIUM Event <= 30 days AND any checklist item in 'required' category is not complete
+  const p5_events_initial = await db.select({
+      eventId: events.id,
+      firstName: clients.firstName,
+      lastName: clients.lastName,
+      eventDate: events.date
+    })
+    .from(events)
+    .innerJoin(clients, eq(events.clientId, clients.id))
+    .where(
+      and(
+        lte(events.date, in30Days.toISOString().split('T')[0]),
+        gte(events.date, todayDate.toISOString().split('T')[0])
+      )
+    );
+
+  for (const e of p5_events_initial) {
+    const openTasks = await db.select().from(tasks).where(
+      and(
+        eq(tasks.eventId, e.eventId),
+        eq(tasks.status, 'open')
+      )
+    ).limit(1);
+
+    if (openTasks.length > 0) {
+       const clientName = e.firstName + ' ' + e.lastName;
+       const days = getDaysDiff(new Date(e.eventDate), todayDate);
+       const allOpenTasks = await db.select().from(tasks).where(
+        and(eq(tasks.eventId, e.eventId), eq(tasks.status, 'open'))
+       );
+       return {
+         message: `${clientName}'s event is in ${days} days with ${allOpenTasks.length} required tasks open`,
+         action: 'View tasks →',
+         href: `/dashboard/events/${e.eventId}`,
+         level: 'medium'
+       };
+    }
+  }
+
+  // 6. Priority 6: LOW Client with no event and last_activity > 60 days ago
+  /*
+  const p6_clients = await db.select({
+      clientId: clients.id,
+      firstName: clients.firstName,
+      lastName: clients.lastName,
+      createdAt: clients.createdAt
+    })
+    .from(clients)
+    .leftJoin(events, eq(clients.id, events.clientId))
+    .where(
+      and(
+        sql`${events.id} IS NULL`,
+        lt(clients.createdAt, ago60Days)
+      )
+    )
+    .limit(1);
+
+  if (p6_clients.length > 0) {
+    const c = p6_clients[0];
+    const clientName = c.firstName + ' ' + c.lastName;
+    return {
+      message: `${clientName} hasn't been in touch in 60 days`,
+      action: 'Send win-back →',
+      href: `/dashboard/clients`,
+      level: 'low'
+    };
+  }
+  */
+  // Replacing with a simpler subquery strategy to avoid the leftJoin isNull bug
+  const activeClientIdsQuery = db.select({ id: events.clientId }).from(events);
+
+  const p6_clients_alt = await db.select({
+    clientId: clients.id,
+    firstName: clients.firstName,
+    lastName: clients.lastName,
+    createdAt: clients.createdAt
+  })
+  .from(clients)
+  .where(
+    and(
+      lt(clients.createdAt, ago60Days),
+      sql`${clients.id} NOT IN (SELECT client_id FROM events)`
+    )
+  )
+  .limit(1);
+
+  if (p6_clients_alt.length > 0) {
+    const c = p6_clients_alt[0];
+    const clientName = c.firstName + ' ' + c.lastName;
+    return {
+      message: `${clientName} hasn't been in touch in 60 days`,
+      action: 'Send win-back →',
+      href: `/dashboard/clients`,
+      level: 'low'
+    };
+  }
+
+  return null;
+}
+
 export default async function DashboardOverview() {
   // Parallel fetches for dashboard metrics
   const now = new Date();
@@ -44,7 +294,8 @@ export default async function DashboardOverview() {
   const endOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
 
   // Stats
-  const [
+    const highestPriorityAlert = await getHighestPriorityAlert();
+const [
     activeEventsList,
     totalRevenueList,
     todayAppts,
@@ -110,42 +361,46 @@ export default async function DashboardOverview() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20 lg:pb-8">
 
-      {/* HEADER */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-playfair font-semibold text-rose-950">Good morning, Isabel</h1>
-          <p className="text-rose-700/80 mt-1">
-            {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-            <span className="mx-2">•</span>
-            <span className={todayAppts.length > 0 ? "text-rose-600 font-medium" : ""}>
-              {todayAppts.length} appointments today
-            </span>
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button className="h-13 w-13 rounded-xl border border-rose-200 text-rose-800 flex items-center justify-center hover:bg-rose-50 transition-colors">
-            <Bell className="w-5 h-5" />
-          </button>
-          <button className="h-13 px-5 rounded-xl bg-rose-700 text-white font-medium flex items-center justify-center gap-2 hover:bg-rose-800 transition-colors">
-            <UserPlus className="w-5 h-5" />
-            <span className="hidden sm:inline">New client</span>
-          </button>
-        </div>
-      </div>
-
-      {/* PRIORITY ALERT BANNER (If tasks overdue or payments overdue) */}
-      {overduePaymentsList.length > 0 && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-4 items-start">
-          <div className="bg-rose-100 p-2 rounded-lg text-rose-700 shrink-0">
+      {/* PRIORITY ALERT BANNER */}
+      {highestPriorityAlert && (
+        <div className={cn(
+          "rounded-xl p-4 flex gap-4 items-center border",
+          highestPriorityAlert.level === 'critical' || highestPriorityAlert.level === 'high'
+            ? "bg-[#FFF3CD] border-amber-200"
+            : highestPriorityAlert.level === 'medium'
+            ? "bg-blue-50 border-blue-200"
+            : "bg-gray-50 border-gray-200"
+        )}>
+          <div className={cn(
+            "p-2 rounded-lg shrink-0",
+             highestPriorityAlert.level === 'critical' || highestPriorityAlert.level === 'high'
+               ? "bg-amber-100 text-amber-700"
+               : highestPriorityAlert.level === 'medium'
+               ? "bg-blue-100 text-blue-700"
+               : "bg-gray-200 text-gray-700"
+          )}>
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-rose-900">{overduePaymentsList.length} action{overduePaymentsList.length === 1 ? '' : 's'} require attention</h3>
-            <p className="text-rose-700 text-sm mt-1">Including {overduePaymentsList.length} overdue payment{overduePaymentsList.length === 1 ? '' : 's'}. Follow up to secure revenue.</p>
+            <h3 className={cn(
+               "font-semibold",
+               highestPriorityAlert.level === 'critical' || highestPriorityAlert.level === 'high'
+                 ? "text-amber-900"
+                 : highestPriorityAlert.level === 'medium'
+                 ? "text-blue-900"
+                 : "text-gray-900"
+            )}>{highestPriorityAlert.message}</h3>
           </div>
-          <button className="h-13 px-4 rounded-lg bg-white border border-rose-200 text-rose-800 font-medium whitespace-nowrap hover:bg-rose-50 transition-colors">
-            Review alerts
-          </button>
+          <Link href={highestPriorityAlert.href} className={cn(
+            "h-10 px-4 rounded-lg bg-white border font-medium whitespace-nowrap flex items-center transition-colors",
+             highestPriorityAlert.level === 'critical' || highestPriorityAlert.level === 'high'
+               ? "border-amber-200 text-amber-800 hover:bg-amber-50"
+               : highestPriorityAlert.level === 'medium'
+               ? "border-blue-200 text-blue-800 hover:bg-blue-50"
+               : "border-gray-200 text-gray-800 hover:bg-gray-100"
+          )}>
+            {highestPriorityAlert.action}
+          </Link>
         </div>
       )}
 
@@ -168,7 +423,7 @@ export default async function DashboardOverview() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-playfair font-semibold text-rose-950 flex items-center gap-2">
                 <CalendarIcon className="w-5 h-5 text-rose-500" />
-                TodayToday's Scheduleapos;s Schedule
+                Today's Schedule
               </h2>
               <button className="text-sm font-medium text-rose-600 hover:text-rose-800">View all</button>
             </div>
