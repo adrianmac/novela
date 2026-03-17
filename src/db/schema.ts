@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, uuid, date } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, uuid, date, boolean, jsonb } from 'drizzle-orm/pg-core';
 
 export const clients = pgTable('clients', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -10,6 +10,8 @@ export const clients = pgTable('clients', {
   secondaryContactPhone: text('secondary_contact_phone'),
   hearAboutUs: text('hear_about_us'), // Walk-in, Instagram, Google, Facebook, Referral, Other
   referredBy: text('referred_by'),
+  lastActivityDate: timestamp('last_activity_date').defaultNow().notNull(),
+  winBackSentAt: timestamp('win_back_sent_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -42,7 +44,8 @@ export const appointments = pgTable('appointments', {
   staffId: text('staff_id'), // clerk user id
   staffName: text('staff_name'),
   notes: text('notes'),
-  status: text('status').notNull(), // upcoming, confirmed, checked_in, completed, cancelled
+  status: text('status').notNull(), // upcoming, confirmed, checked_in, completed, cancelled, reschedule_requested
+  reminder24hSent: boolean('reminder_24h_sent').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -116,5 +119,13 @@ export const alterationItems = pgTable('alteration_items', {
   description: text('description'),
   estimatedPrice: integer('estimated_price').notNull().default(0), // in cents
   isCompleted: integer('is_completed').notNull().default(0), // 0 or 1 for boolean
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const jobLogs = pgTable('job_logs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  jobName: text('job_name').notNull(),
+  status: text('status').notNull(), // success, failed
+  details: jsonb('details'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

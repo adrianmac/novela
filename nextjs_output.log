@@ -137,16 +137,13 @@ Import trace for requested module:
  ✓ Compiled in 1464ms (268 modules)
  ✓ Compiled in 1521ms (268 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
-de_modules/next/dist/build/webpack/loaders/next-swc-loader.js
-<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
-<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
-<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
-<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
-<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
-<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
-<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
-<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
-<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Compiled in 20s (254 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Compiled in 4s (254 modules)
+ ✓ Compiled in 1217ms (268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ile dependencies /app/node_modules/next/dist/build/swc/index.js
 <w>  at file /app/node_modules/next/dist/build/swc/index.js
 <w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
 <w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
@@ -231,3 +228,9 @@ de_modules/next/dist/build/webpack/loaders/next-swc-loader.js
  ✓ Compiled in 1521ms (278 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
  ✓ Compiled in 1532ms (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Compiled in 20.9s (264 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /app/.next/cache/webpack/client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Compiled in 4.5s (264 modules)
+ ✓ Compiled in 1339ms (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
