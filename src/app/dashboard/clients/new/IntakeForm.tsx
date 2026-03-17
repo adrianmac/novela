@@ -1,5 +1,6 @@
 'use client'
 
+import { AppointmentTimePicker } from "@/components/ui/AppointmentTimePicker";
 import React, { useState } from 'react';
 import { submitIntakeForm } from './actions';
 import { useRouter } from 'next/navigation';
@@ -318,29 +319,22 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
               </div>
             </div>
 
-            {/* Availability Picker (Simplified Mock) */}
             <div className="space-y-4">
-               <div className="flex justify-between items-center">
-                 <h3 className="font-bold text-rose-950">Select Time Slot</h3>
-                 <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Next Week</span>
-               </div>
-               <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                 {['2026-04-12T10:00:00', '2026-04-12T14:00:00', '2026-04-13T11:00:00'].map(dateStr => {
-                   const dateObj = new Date(dateStr);
-                   const isSelected = formData.appointmentDate === dateStr;
-                   return (
-                     <button key={dateStr} onClick={() => setFormData({...formData, appointmentDate: dateStr})} className={cn(
-                       "p-3 rounded-xl border-2 text-center transition-all touch-manipulation shadow-sm",
-                       isSelected ? "bg-blue-600 border-blue-600 text-white shadow-md ring-4 ring-blue-600/20" : "bg-white border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50"
-                     )}>
-                       <div className="text-xs font-bold uppercase tracking-widest mb-1 opacity-80">{dateObj.toLocaleDateString([], { weekday: 'short' })}</div>
-                       <div className="font-semibold">{dateObj.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</div>
-                     </button>
-                   )
-                 })}
-               </div>
-               {errors.appointmentDate && <p className="text-red-500 text-xs font-semibold">{errors.appointmentDate}</p>}
+              <h3 className="font-bold text-rose-950">Select Time Slot</h3>
+              <AppointmentTimePicker
+                orgId="bella-bridal"
+                onSelect={(data) => {
+                  const dateStr = data.date.toISOString().split('T')[0] + 'T' + data.startTime + ':00';
+                  setFormData({...formData, appointmentDate: dateStr});
+                }}
+              />
+              {formData.appointmentDate && (
+                <div className="mt-2 text-sm text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  Selected appointment: <span className="font-bold">{new Date(formData.appointmentDate).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
+                </div>
+              )}
             </div>
+               {errors.appointmentDate && <p className="text-red-500 text-xs font-semibold">{errors.appointmentDate}</p>}
 
             <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-rose-50">
               <div>
