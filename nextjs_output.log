@@ -130,15 +130,14 @@ Import trace for requested module:
  ✓ Compiled in 39.1s (268 modules)
  ✓ Compiled in 6.7s (268 modules)
  ✓ Compiled in 6.4s (268 modules)
-e_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
-<w>  at file dependencies /app/node_modules/next/dist/build/entries.js
-<w>  at file /app/node_modules/next/dist/build/entries.js
-<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
-<w>  at file /app/node_modules/next/dist/build/webpack/plugins/next-types-plugin/index.js
-<w>  at file dependencies /app/node_modules/next/dist/build/webpack-config.js
-<w>  at file /app/node_modules/next/dist/build/webpack-config.js
-<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
-<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+ ✓ Compiled in 28.4s (268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/2.pack.gz_' -> '/app/.next/cache/webpack/client-development/2.pack.gz'
+ ✓ Compiled in 7.5s (268 modules)
+ ✓ Compiled in 2.3s (268 modules)
+ ✓ Compiled in 1464ms (268 modules)
+ ✓ Compiled in 1521ms (268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+de_modules/next/dist/build/webpack/loaders/next-swc-loader.js
 <w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
 <w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
 <w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
@@ -225,3 +224,10 @@ e_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
  ✓ Compiled in 40.2s (278 modules)
  ✓ Compiled in 8.3s (278 modules)
  ✓ Compiled in 6.1s (278 modules)
+ ✓ Compiled in 34s (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/2.pack.gz_' -> '/app/.next/cache/webpack/client-development/2.pack.gz'
+ ✓ Compiled in 6.5s (278 modules)
+ ✓ Compiled in 2.9s (278 modules)
+ ✓ Compiled in 1521ms (278 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/.next/cache/webpack/client-development/0.pack.gz_' -> '/app/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 1532ms (278 modules)

@@ -3,6 +3,8 @@
 import { db } from "@/db";
 import { clients, events, appointments, eventServices } from "@/db/schema";
 import { revalidatePath } from "next/cache";
+import { generateMilestones } from "@/app/dashboard/events/paymentActions";
+import { sql } from "drizzle-orm";
 
 export async function submitBooking(data: any) {
   try {
@@ -56,6 +58,16 @@ export async function submitBooking(data: any) {
     console.log(`[Twilio Mock] SMS sent to owner (555-000-0000):`);
     console.log(`"New lead! ${data.firstName} booked a consultation for ${new Date(data.appointmentTime).toLocaleString()}."`);
     console.log("-----------------------------------------");
+
+    // 6. Generate payment milestones
+    let baseAmount = 500000; // Mock base total if none exists
+    await db.update(events).set({ totalValue: baseAmount }).where(sql`id = ${event.id}`);
+    await generateMilestones({
+      id: event.id,
+      clientId: client.id,
+      date: event.date,
+      services_json: data.services || []
+    }, baseAmount);
 
     revalidatePath("/dashboard");
     return { success: true };
