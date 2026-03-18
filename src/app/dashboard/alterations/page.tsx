@@ -5,6 +5,8 @@ export const metadata = {
   title: 'Alterations Queue | Novedades Isabel',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function AlterationsPage() {
   const jobs = await getAlterations();
 
