@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { events, clients, appointments, eventServices, payments } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function EventsPage() {
   const allEvents = await db

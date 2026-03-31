@@ -1,6 +1,8 @@
 import { getAlterations } from './actions';
 import AlterationsClient from './AlterationsClient';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Alterations Queue | Novedades Isabel',
 };
