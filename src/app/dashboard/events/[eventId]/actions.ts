@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { taskToggleSchema, paymentSchema, noteSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
 
 export async function toggleTaskStatus(taskId: string, currentStatus: string, eventId: string) {
   await requireAuth();
@@ -17,7 +18,7 @@ export async function toggleTaskStatus(taskId: string, currentStatus: string, ev
     revalidatePath(`/dashboard/events/${eventId}`);
     return { success: true };
   } catch (error) {
-    console.error('Failed to toggle task:', error);
+    logger.error('Failed to toggle task', { error: String(error) });
     return { success: false, error: 'Failed to update task' };
   }
 }
@@ -31,7 +32,7 @@ export async function addNote(eventId: string, text: string) {
     revalidatePath(`/dashboard/events/${eventId}`);
     return { success: true };
   } catch (error) {
-    console.error('Failed to add note:', error);
+    logger.error('Failed to add note', { error: String(error) });
     return { success: false, error: 'Failed to add note' };
   }
 }
@@ -45,7 +46,7 @@ export async function markPaymentPaid(paymentId: string, eventId: string) {
     revalidatePath(`/dashboard/events/${eventId}`);
     return { success: true };
   } catch (error) {
-    console.error('Failed to mark payment:', error);
+    logger.error('Failed to mark payment', { error: String(error) });
     return { success: false, error: 'Failed to record payment' };
   }
 }

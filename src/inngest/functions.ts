@@ -2,6 +2,7 @@ import { inngest } from "./client";
 import { db } from "@/db";
 import { appointments, clients, events, payments, inventoryRentals, inventory, jobLogs, tasks } from "@/db/schema";
 import { eq, and, or, lt, lte, gt, gte, sql, inArray } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 // Utility function to log to job_logs
 async function logJob(jobName: string, status: 'success' | 'failed', details: any) {
@@ -12,13 +13,13 @@ async function logJob(jobName: string, status: 'success' | 'failed', details: an
       details,
     });
   } catch (e) {
-    console.error("Failed to insert job log", e);
+    logger.error("Failed to insert job log", { error: String(e) });
   }
 }
 
 // Mock Twilio SMS sender
 async function sendSMS(phone: string, message: string) {
-  console.log(`\n[Twilio SMS] To: ${phone}\nMessage: ${message}\n`);
+  logger.info("Sending SMS", { to: phone, message });
   return { success: true, messageId: `msg_${Math.random().toString(36).substring(7)}` };
 }
 

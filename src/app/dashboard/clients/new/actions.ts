@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { generateMilestones } from "@/app/dashboard/events/paymentActions";
 import { requireAuth } from "@/lib/auth";
 import { intakeFormSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
 
 export async function submitIntakeForm(data: unknown) {
   await requireAuth();
@@ -91,7 +92,7 @@ export async function submitIntakeForm(data: unknown) {
 
     return { success: true, eventId: result.eventId };
   } catch (error) {
-    console.error("Failed to submit intake form:", error);
+    logger.error("Failed to submit intake form", { error: String(error) });
     return { success: false, error: "Failed to create client and event" };
   }
 }

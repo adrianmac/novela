@@ -3,6 +3,7 @@ import { db } from '@/db';
 import { appointments, clients, tasks, reviews } from '@/db/schema';
 import { eq, and, gte, asc, desc, sql, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
+import { logger } from '@/lib/logger';
 
 function validateTwilioSignature(authToken: string, url: string, params: Record<string, string>, signature: string): boolean {
   const sortedKeys = Object.keys(params).sort();
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
   try {
     const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
     if (!twilioAuthToken) {
-      console.error('TWILIO_AUTH_TOKEN not configured');
+      logger.error('TWILIO_AUTH_TOKEN not configured');
       return new NextResponse(TWIML_EMPTY, { status: 200, headers: twimlHeaders });
     }
 
@@ -113,7 +114,7 @@ export async function POST(req: Request) {
       await db.update(clients).set({ lastActivityDate: new Date() }).where(eq(clients.id, client.id));
 
       if (score >= 4) {
-        console.log(`[Twilio SMS] To: ${fromStr}\nMessage: Thank you so much! We'd appreciate a Google review: https://g.page/r/fake/review\n`);
+        logger.info("Sending review request SMS", { to: fromStr, message: "Thank you so much! We'd appreciate a Google review" });
       } else if (eventId) {
         await db.insert(tasks).values({
           eventId,
@@ -126,7 +127,7 @@ export async function POST(req: Request) {
 
     return new NextResponse(TWIML_EMPTY, { status: 200, headers: twimlHeaders });
   } catch (error) {
-    console.error('SMS Reply error:', error);
+    logger.error('SMS Reply error', { error: String(error) });
     return new NextResponse(TWIML_EMPTY, { status: 200, headers: twimlHeaders });
   }
 }

@@ -14,6 +14,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAuth } from '@/lib/auth';
 import { alterationStatusSchema, measurementsSchema, alterationItemSchema } from '@/lib/validations';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 export async function getAlterations() {
   await requireAuth();
@@ -84,7 +85,7 @@ export async function getAlterations() {
       fittings: fittingsByEvent.get(row.event.id) || [],
     }));
   } catch (error) {
-    console.error('Failed to get alterations:', error);
+    logger.error('Failed to get alterations', { error: String(error) });
     return [];
   }
 }
@@ -102,7 +103,7 @@ export async function updateAlterationStatus(jobId: string, status: string) {
     revalidatePath('/dashboard/alterations');
     return { success: true };
   } catch (error) {
-    console.error('Failed to update alteration status:', error);
+    logger.error('Failed to update alteration status', { error: String(error) });
     return { success: false, error: 'Failed to update status' };
   }
 }
@@ -120,7 +121,7 @@ export async function updateMeasurements(jobId: string, measurements: string) {
     revalidatePath('/dashboard/alterations');
     return { success: true };
   } catch (error) {
-    console.error('Failed to update measurements:', error);
+    logger.error('Failed to update measurements', { error: String(error) });
     return { success: false, error: 'Failed to update measurements' };
   }
 }
@@ -138,7 +139,7 @@ export async function toggleAlterationItem(itemId: string, isCompleted: boolean)
     revalidatePath('/dashboard/alterations');
     return { success: true };
   } catch (error) {
-    console.error('Failed to toggle alteration item:', error);
+    logger.error('Failed to toggle alteration item', { error: String(error) });
     return { success: false, error: 'Failed to toggle item status' };
   }
 }
@@ -164,7 +165,7 @@ export async function addAlterationItem(jobId: string, taskName: string, descrip
       return { success: true };
     });
   } catch (error) {
-    console.error('Failed to add alteration item:', error);
+    logger.error('Failed to add alteration item', { error: String(error) });
     return { success: false, error: 'Failed to add item' };
   }
 }
@@ -186,7 +187,7 @@ export async function deleteAlterationItem(itemId: string, jobId: string) {
       return { success: true };
     });
   } catch (error) {
-    console.error('Failed to delete alteration item:', error);
+    logger.error('Failed to delete alteration item', { error: String(error) });
     return { success: false, error: 'Failed to delete item' };
   }
 }

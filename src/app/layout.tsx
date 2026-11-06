@@ -15,7 +15,23 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Novela | Every celebration has a story",
-  description: "Bridal boutique management software",
+  description: "Bridal boutique management software — appointments, alterations, inventory, and events in one place.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://novela.app'),
+  openGraph: {
+    title: "Novela | Every celebration has a story",
+    description: "Bridal boutique management software — appointments, alterations, inventory, and events in one place.",
+    siteName: "Novela",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Novela | Every celebration has a story",
+    description: "Bridal boutique management software — appointments, alterations, inventory, and events in one place.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

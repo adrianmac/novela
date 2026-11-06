@@ -6,6 +6,7 @@ import { eq, sql, and, or, lte, gte, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { inventoryItemSchema, reserveItemSchema, inventoryStatusSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
 
 export async function addInventoryItem(data: unknown) {
   await requireAuth();
@@ -27,7 +28,7 @@ export async function addInventoryItem(data: unknown) {
     revalidatePath('/dashboard/inventory');
     return { success: true, item: newItem };
   } catch (err) {
-    console.error("Add item error", err);
+    logger.error("Add item error", { error: String(err) });
     return { success: false, error: "Failed to add inventory item" };
   }
 }
@@ -155,7 +156,7 @@ export async function reserveItem(itemId: string, eventId: string, pickupDate: s
       return { success: true };
     });
   } catch (err) {
-    console.error("Reserve item error", err);
+    logger.error("Reserve item error", { error: String(err) });
     return { success: false, error: "Failed to reserve item" };
   } finally {
     revalidatePath('/dashboard/inventory');
@@ -171,7 +172,7 @@ export async function markItemStatus(itemId: string, newStatus: string) {
     revalidatePath('/dashboard/inventory');
     return { success: true };
   } catch (err) {
-    console.error("Mark item status error", err);
+    logger.error("Mark item status error", { error: String(err) });
     return { success: false, error: "Failed to update item status" };
   }
 }
@@ -193,7 +194,7 @@ export async function logReturn(rentalId: string, condition: string, notes: stri
     revalidatePath('/dashboard/inventory');
     return { success: true };
   } catch (err) {
-    console.error("Log return error", err);
+    logger.error("Log return error", { error: String(err) });
     return { success: false, error: "Failed to process return" };
   }
 }
