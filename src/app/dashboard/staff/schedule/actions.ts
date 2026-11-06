@@ -1,15 +1,30 @@
 "use server";
 
 import { db } from "@/db";
-import { appointments, clients, events } from "@/db/schema";
+import { appointments, clients, events, staff as staffTable } from "@/db/schema";
 import { eq, gte, lte, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { STAFF } from "./shared";
+import { DEFAULT_STAFF } from "./shared";
+import type { StaffMember } from "./shared";
 import { requireAuth } from "@/lib/auth";
 import { z } from "zod";
 
+async function getStaffFromDb(): Promise<StaffMember[]> {
+  const rows = await db.select({
+    id: staffTable.id,
+    name: staffTable.name,
+    role: staffTable.role,
+    capacityHours: staffTable.capacityHours,
+  }).from(staffTable).where(eq(staffTable.isActive, true));
+
+  if (rows.length === 0) return DEFAULT_STAFF;
+  return rows;
+}
+
 export async function getScheduleData(startDate?: Date, endDate?: Date) {
   await requireAuth();
+
+  const staffMembers = await getStaffFromDb();
 
   const start = startDate || new Date();
   if (!startDate) {
@@ -50,7 +65,7 @@ export async function getScheduleData(startDate?: Date, endDate?: Date) {
 
   return {
     appointments: rawAppointments,
-    staff: STAFF,
+    staff: staffMembers,
     startDate: start.toISOString(),
     endDate: end.toISOString(),
   };
@@ -103,7 +118,8 @@ export async function addAppointment(data: unknown) {
       return { error: "Staff member is already booked at this time." };
     }
 
-    const staff = STAFF.find((s: any) => s.id === parsed.staffId);
+    const staffMembers = await getStaffFromDb();
+    const staffMember = staffMembers.find(s => s.id === parsed.staffId);
 
     await db.insert(appointments).values({
       eventId: parsed.eventId,
@@ -111,7 +127,7 @@ export async function addAppointment(data: unknown) {
       type: parsed.type,
       date: aptDate,
       staffId: parsed.staffId,
-      staffName: staff?.name || "Unassigned",
+      staffName: staffMember?.name || "Unassigned",
       status: "upcoming",
     });
 

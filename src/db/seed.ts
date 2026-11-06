@@ -17,10 +17,27 @@ async function seed() {
   await db.delete(schema.payments);
   await db.delete(schema.appointments);
   await db.delete(schema.eventServices);
+  await db.delete(schema.notes);
+  await db.delete(schema.reviews);
   await db.delete(schema.events);
   await db.delete(schema.clients);
+  await db.delete(schema.staff);
 
-  console.log('Seeding database...');
+  console.log('Seeding staff...');
+  await db.insert(schema.staff).values([
+    { name: 'Isabel', role: 'Owner', capacityHours: 40 },
+    { name: 'Maria S.', role: 'Seamstress', capacityHours: 30 },
+    { name: 'Elena V.', role: 'Consultant', capacityHours: 25 },
+    { name: 'Sofia G.', role: 'Event Planner', capacityHours: 35 },
+  ]);
+
+  const staffRows = await db.select().from(schema.staff);
+  const staffByName: Record<string, string> = {};
+  for (const s of staffRows) {
+    staffByName[s.name] = s.id;
+  }
+
+  console.log('Seeding clients and events...');
   const [client1] = await db.insert(schema.clients).values({
     firstName: 'Jessica',
     lastName: 'Mark',
@@ -44,9 +61,9 @@ async function seed() {
   ]);
 
   await db.insert(schema.appointments).values([
-    { eventId: event1.id, clientId: client1.id, type: 'consultation', date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), staffId: 'u1', staffName: 'Isabel', status: 'completed' },
-    { eventId: event1.id, clientId: client1.id, type: 'fitting', date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), staffId: 'u2', staffName: 'Maria S.', status: 'completed' },
-    { eventId: event1.id, clientId: client1.id, type: 'pickup', date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), staffId: 'u1', staffName: 'Isabel', status: 'upcoming' },
+    { eventId: event1.id, clientId: client1.id, type: 'consultation', date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), staffId: staffByName['Isabel'], staffName: 'Isabel', status: 'completed' },
+    { eventId: event1.id, clientId: client1.id, type: 'fitting', date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), staffId: staffByName['Maria S.'], staffName: 'Maria S.', status: 'completed' },
+    { eventId: event1.id, clientId: client1.id, type: 'pickup', date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), staffId: staffByName['Isabel'], staffName: 'Isabel', status: 'upcoming' },
   ]);
 
   await db.insert(schema.payments).values([
@@ -60,9 +77,8 @@ async function seed() {
     { eventId: event1.id, title: 'Confirm floral order', status: 'completed', dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
   ]);
 
-  console.log('Seeded successfully.');
+  console.log('Seeded clients and events.');
 
-  // Create another event for calendar
   const [client2] = await db.insert(schema.clients).values({
     firstName: 'Ana',
     lastName: 'Gomez',
@@ -78,8 +94,6 @@ async function seed() {
     totalValue: 350000,
   }).returning();
 }
-
-seed().catch(console.error).finally(() => process.exit(0));
 
 async function seedInventory() {
   console.log('Clearing inventory...');
@@ -176,9 +190,6 @@ async function seedInventory() {
   }
 }
 
-seedInventory().catch(console.error).finally(() => process.exit(0));
-
-// Add alteration seeding logic
 async function seedAlterations() {
   const allEvents = await db.select().from(schema.events);
   const allClients = await db.select().from(schema.clients);
@@ -231,7 +242,6 @@ async function seedAlterations() {
   for (const job of sampleJobs) {
     const [insertedJob] = await db.insert(schema.alterationJobs).values(job).returning();
 
-    // Add items for the job
     await db.insert(schema.alterationItems).values([
       { jobId: insertedJob.id, taskName: 'Hem', description: 'Take up front hem', estimatedPrice: 5000, isCompleted: job.status === 'complete' },
       { jobId: insertedJob.id, taskName: 'Bustle', description: 'Add 3-point over-bustle', estimatedPrice: job.totalEstimatedPrice - 5000, isCompleted: job.status === 'complete' },
@@ -239,11 +249,14 @@ async function seedAlterations() {
   }
 }
 
+async function main() {
+  await seed();
+  await seedInventory();
+  await seedAlterations();
+  console.log("All seeding complete.");
+}
 
-seedAlterations().then(() => {
-  console.log("Alterations seeded");
-  process.exit(0);
-}).catch(e => {
+main().catch(e => {
   console.error(e);
   process.exit(1);
-});
+}).finally(() => process.exit(0));

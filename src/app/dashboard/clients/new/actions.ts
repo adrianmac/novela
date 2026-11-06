@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from "@/db";
-import { clients, events, eventServices, appointments } from "@/db/schema";
+import { clients, events, eventServices, appointments, staff as staffTable } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateMilestones } from "@/app/dashboard/events/paymentActions";
@@ -107,8 +107,20 @@ export async function getVenues(query: string) {
 }
 
 export async function getAvailableStaff() {
-  return [
-    { id: 'u1', name: 'Isabel M.', role: 'Senior Coordinator' },
-    { id: 'u2', name: 'Elena R.', role: 'Coordinator' },
-  ];
+  const rows = await db.select({
+    id: staffTable.id,
+    name: staffTable.name,
+    role: staffTable.role,
+  }).from(staffTable).where(eq(staffTable.isActive, true));
+
+  if (rows.length === 0) {
+    return [
+      { id: 'u1', name: 'Isabel', role: 'Owner' },
+      { id: 'u2', name: 'Maria S.', role: 'Seamstress' },
+      { id: 'u3', name: 'Elena V.', role: 'Consultant' },
+      { id: 'u4', name: 'Sofia G.', role: 'Event Planner' },
+    ];
+  }
+
+  return rows;
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Scissors, MessageSquare, Package, Plus, Clock, Users, User, X } from "lucide-react";
 import { addAppointment, getClientsAndEvents } from "./actions";
-import { STAFF } from "./shared";
+import type { StaffMember } from "./shared";
 
 type ViewType = "week" | "day";
 
@@ -33,6 +33,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
   });
 
   const appointments = initialData.appointments || [];
+  const staffList: StaffMember[] = initialData.staff || [];
 
   const handlePrevWeek = () => {
     const newDate = new Date(currentDate);
@@ -59,7 +60,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
     });
   };
 
-  const displayedStaff = selectedStaff === "all" ? STAFF : STAFF.filter(s => s.id === selectedStaff);
+  const displayedStaff = selectedStaff === "all" ? staffList : staffList.filter(s => s.id === selectedStaff);
 
   const formatWeekRange = () => {
     const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
@@ -95,7 +96,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
             className="h-13 px-4 rounded-xl border border-stone-200 text-sm font-medium focus:ring-rose-500 focus:border-rose-500 shadow-sm"
           >
             <option value="all">All Staff</option>
-            {STAFF.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            {staffList.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
 
           <div className="flex bg-stone-200 p-1 rounded-xl h-13 items-center">
@@ -295,6 +296,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
         <AddAppointmentModal
           staffId={selectedCell.staffId}
           date={selectedCell.date}
+          staffList={staffList}
           onClose={() => setIsAddModalOpen(false)}
         />
       )}
@@ -320,14 +322,14 @@ function getAptIcon(type: string) {
   }
 }
 
-function AddAppointmentModal({ staffId, date, onClose }: { staffId: string, date: Date, onClose: () => void }) {
+function AddAppointmentModal({ staffId, date, staffList, onClose }: { staffId: string, date: Date, staffList: StaffMember[], onClose: () => void }) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
-  const staff = STAFF.find(s => s.id === staffId);
+  const staff = staffList.find(s => s.id === staffId);
   const [time, setTime] = useState("10:00");
   const [type, setType] = useState("consultation");
   const [clientId, setClientId] = useState("");
@@ -428,7 +430,7 @@ function AddAppointmentModal({ staffId, date, onClose }: { staffId: string, date
             <label className="block text-sm font-bold text-stone-700 mb-2">Event</label>
             <select value={eventId} onChange={e => setEventId(e.target.value)} disabled={!clientId} className="w-full h-13 px-4 rounded-xl border border-stone-300 focus:ring-rose-500 focus:border-rose-500 bg-white disabled:bg-stone-50 disabled:text-stone-400">
               <option value="">Select an event...</option>
-              {data.events.filter(e => !clientId || e.clientId === parseInt(clientId, 10)).map(e => (
+              {data.events.filter(e => !clientId || e.clientId === clientId).map(e => (
                 <option key={e.id} value={e.id}>{e.type.replace('_', ' ')} - {new Date(e.date).toLocaleDateString()}</option>
               ))}
             </select>

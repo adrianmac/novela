@@ -184,6 +184,15 @@ export const notes = pgTable('notes', {
   eventIdIdx: index('notes_event_id_idx').on(table.eventId),
 }));
 
+export const staff = pgTable('staff', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  role: text('role').notNull(),
+  capacityHours: integer('capacity_hours').notNull().default(40),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const reviews = pgTable('reviews', {
   id: uuid('id').defaultRandom().primaryKey(),
   clientId: uuid('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
