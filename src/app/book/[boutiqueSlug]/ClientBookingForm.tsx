@@ -24,6 +24,7 @@ interface BookingData {
 
 export default function ClientBookingForm({ boutiqueSlug }: { boutiqueSlug: string }) {
   const [step, setStep] = useState<Step>(1);
+  const [bookingError, setBookingError] = useState<string | null>(null);
   const [data, setData] = useState<BookingData>({
     eventType: null,
     services: [],
@@ -95,9 +96,13 @@ export default function ClientBookingForm({ boutiqueSlug }: { boutiqueSlug: stri
         )}
         {step === 5 && (
           <Step5 data={data} onUpdate={updateData} onSubmit={async () => {
-             await submitBooking(data);
+             setBookingError(null);
+             const result = await submitBooking(data);
+             if (result && !result.success) {
+               throw new Error(result.error || 'Booking failed');
+             }
              setStep(6);
-          }} onBack={prevStep} />
+          }} onBack={prevStep} bookingError={bookingError} onError={setBookingError} />
         )}
       </div>
     </div>
@@ -389,7 +394,7 @@ function Step4({ data, onUpdate, onNext, onBack }: { data: BookingData, onUpdate
   );
 }
 
-function Step5({ data, onUpdate, onSubmit, onBack }: { data: BookingData, onUpdate: (d: Partial<BookingData>) => void, onSubmit: () => void, onBack: () => void }) {
+function Step5({ data, onUpdate, onSubmit, onBack, bookingError, onError }: { data: BookingData, onUpdate: (d: Partial<BookingData>) => void, onSubmit: () => void, onBack: () => void, bookingError?: string | null, onError?: (msg: string | null) => void }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
 
@@ -418,8 +423,14 @@ function Step5({ data, onUpdate, onSubmit, onBack }: { data: BookingData, onUpda
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    await onSubmit();
-    setIsSubmitting(false);
+    onError?.(null);
+    try {
+      await onSubmit();
+    } catch (e) {
+      onError?.(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (showSummary && data.appointmentTime) {
@@ -453,6 +464,12 @@ function Step5({ data, onUpdate, onSubmit, onBack }: { data: BookingData, onUpda
              </div>
            </div>
         </div>
+
+        {bookingError && (
+          <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-sm font-medium mb-4">
+            {bookingError}
+          </div>
+        )}
 
         <div className="flex gap-4">
           <button onClick={() => setShowSummary(false)} disabled={isSubmitting} className="w-1/3 py-4 font-bold text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-xl transition-colors min-h-13 disabled:opacity-50">Back</button>

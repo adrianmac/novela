@@ -2,33 +2,39 @@
 
 import { db } from "@/db";
 import { inventory, inventoryRentals, events, clients } from "@/db/schema";
-import { eq, sql, and, or, lt, gte, lte, desc } from "drizzle-orm";
+import { eq, sql, and, or, lte, gte, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "@/lib/auth";
+import { inventoryItemSchema, reserveItemSchema, inventoryStatusSchema } from "@/lib/validations";
 
-export async function addInventoryItem(data: any) {
+export async function addInventoryItem(data: unknown) {
+  await requireAuth();
+  const parsed = inventoryItemSchema.parse(data);
+
   try {
     const [newItem] = await db.insert(inventory).values({
-      sku: data.sku,
-      name: data.name,
-      description: data.description || null,
-      size: data.size || null,
-      category: data.category,
-      rentalPrice: Math.round(data.rentalPrice * 100),
-      depositAmount: Math.round(data.depositAmount * 100),
+      sku: parsed.sku,
+      name: parsed.name,
+      description: parsed.description || null,
+      size: parsed.size || null,
+      category: parsed.category,
+      rentalPrice: Math.round(parsed.rentalPrice * 100),
+      depositAmount: Math.round(parsed.depositAmount * 100),
       status: 'available',
-      imageUrl: data.imageUrl || null,
+      imageUrl: parsed.imageUrl || null,
     }).returning();
 
     revalidatePath('/dashboard/inventory');
     return { success: true, item: newItem };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Add item error", err);
-    return { success: false, error: err.message };
+    return { success: false, error: "Failed to add inventory item" };
   }
 }
 
 export async function checkDressAvailability(dressId: string, proposedPickupDate: string, proposedReturnDate: string) {
-  // Add 1-day cleaning buffer
+  await requireAuth();
+
   const pReturn = new Date(proposedReturnDate);
   pReturn.setDate(pReturn.getDate() + 1);
   const pReturnStr = pReturn.toISOString().split('T')[0];
@@ -37,7 +43,6 @@ export async function checkDressAvailability(dressId: string, proposedPickupDate
   pPickup.setDate(pPickup.getDate() - 1);
   const pPickupStr = pPickup.toISOString().split('T')[0];
 
-  // Find conflicts
   const conflictsResult = await db.select({
     clientName: sql<string>`${clients.firstName} || ' ' || ${clients.lastName}`,
     pickupDate: inventoryRentals.pickupDate,
@@ -63,27 +68,67 @@ export async function checkDressAvailability(dressId: string, proposedPickupDate
     return { available: true };
   }
 
-  // Get current dress details for alternatives
   const [currentDress] = await db.select().from(inventory).where(eq(inventory.id, dressId));
-  let alternatives: any[] = [];
+  let alternatives: typeof currentDress[] = [];
 
   if (currentDress) {
-    // Find alternatives (same category and size)
     const allAlternatives = await db.select().from(inventory).where(
       and(
         eq(inventory.category, currentDress.category),
-        eq(inventory.size, currentDress.size || ''),
+        currentDress.size ? eq(inventory.size, currentDress.size) : sql`${inventory.size} IS NULL`,
         sql`${inventory.id} != ${dressId}`
       )
     );
 
-    // Check conflicts for alternatives
-    for (const alt of allAlternatives) {
-      if (alternatives.length >= 3) break;
-
-      const altConflicts = await db.select().from(inventoryRentals).where(
+    // Batch check conflicts for all alternatives at once
+    if (allAlternatives.length > 0) {
+      const altIds = allAlternatives.map(a => a.id);
+      const altConflicts = await db.select({ itemId: inventoryRentals.itemId }).from(inventoryRentals).where(
         and(
-          eq(inventoryRentals.itemId, alt.id),
+          sql`${inventoryRentals.itemId} IN (${sql.join(altIds.map(id => sql`${id}`), sql`, `)})`,
+          or(eq(inventoryRentals.status, 'reserved'), eq(inventoryRentals.status, 'rented')),
+          sql`${inventoryRentals.returnedAt} IS NULL`,
+          and(
+            lte(inventoryRentals.pickupDate, pReturnStr),
+            gte(inventoryRentals.returnDate, pPickupStr)
+          )
+        )
+      );
+      const conflictedIds = new Set(altConflicts.map(c => c.itemId));
+      alternatives = allAlternatives.filter(a => !conflictedIds.has(a.id)).slice(0, 3);
+    }
+  }
+
+  return {
+    available: false,
+    conflicts: conflictsResult,
+    alternatives
+  };
+}
+
+export async function reserveItem(itemId: string, eventId: string, pickupDate: string, returnDate: string) {
+  await requireAuth();
+  reserveItemSchema.parse({ itemId, eventId, pickupDate, returnDate });
+
+  try {
+    return await db.transaction(async (tx) => {
+      // Lock the inventory row to prevent concurrent reservations
+      const [item] = await tx.select().from(inventory).where(eq(inventory.id, itemId)).for('update');
+      if (!item || item.status === 'retired') {
+        return { success: false, error: "Item is not available for reservation." };
+      }
+
+      // Check for date conflicts within the transaction
+      const pReturn = new Date(returnDate);
+      pReturn.setDate(pReturn.getDate() + 1);
+      const pReturnStr = pReturn.toISOString().split('T')[0];
+      const pPickup = new Date(pickupDate);
+      pPickup.setDate(pPickup.getDate() - 1);
+      const pPickupStr = pPickup.toISOString().split('T')[0];
+
+      const conflicts = await tx.select({ id: inventoryRentals.id }).from(inventoryRentals).where(
+        and(
+          eq(inventoryRentals.itemId, itemId),
           or(eq(inventoryRentals.status, 'reserved'), eq(inventoryRentals.status, 'rented')),
           sql`${inventoryRentals.returnedAt} IS NULL`,
           and(
@@ -93,47 +138,47 @@ export async function checkDressAvailability(dressId: string, proposedPickupDate
         )
       );
 
-      if (altConflicts.length === 0) {
-        alternatives.push(alt);
+      if (conflicts.length > 0) {
+        return { success: false, error: "Dates conflict with an existing rental." };
       }
-    }
-  }
 
-  return {
-    available: false,
-    conflicts: conflictsResult,
-    alternatives: alternatives
-  };
-}
+      await tx.insert(inventoryRentals).values({
+        itemId,
+        eventId,
+        status: 'reserved',
+        pickupDate,
+        returnDate,
+      });
 
-export async function reserveItem(itemId: string, eventId: string, pickupDate: string, returnDate: string) {
-  try {
-    const availability = await checkDressAvailability(itemId, pickupDate, returnDate);
-    if (!availability.available) return { success: false, error: "Dates conflict with an existing rental." };
+      await tx.update(inventory).set({ status: 'reserved' }).where(eq(inventory.id, itemId));
 
-    await db.insert(inventoryRentals).values({
-      itemId,
-      eventId,
-      status: 'reserved',
-      pickupDate,
-      returnDate,
+      return { success: true };
     });
-
-    await db.update(inventory).set({ status: 'reserved' }).where(eq(inventory.id, itemId));
-
+  } catch (err) {
+    console.error("Reserve item error", err);
+    return { success: false, error: "Failed to reserve item" };
+  } finally {
     revalidatePath('/dashboard/inventory');
-    return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
   }
 }
 
 export async function markItemStatus(itemId: string, newStatus: string) {
-  await db.update(inventory).set({ status: newStatus }).where(eq(inventory.id, itemId));
-  revalidatePath('/dashboard/inventory');
+  await requireAuth();
+  inventoryStatusSchema.parse({ itemId, status: newStatus });
+
+  try {
+    await db.update(inventory).set({ status: newStatus }).where(eq(inventory.id, itemId));
+    revalidatePath('/dashboard/inventory');
+    return { success: true };
+  } catch (err) {
+    console.error("Mark item status error", err);
+    return { success: false, error: "Failed to update item status" };
+  }
 }
 
 export async function logReturn(rentalId: string, condition: string, notes: string, inCleaning: boolean) {
+  await requireAuth();
+
   try {
     const [rental] = await db.update(inventoryRentals).set({
       status: 'returned',
@@ -147,8 +192,9 @@ export async function logReturn(rentalId: string, condition: string, notes: stri
 
     revalidatePath('/dashboard/inventory');
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err) {
+    console.error("Log return error", err);
+    return { success: false, error: "Failed to process return" };
   }
 }
 

@@ -7,23 +7,45 @@ import { ChevronRight, CheckCircle2 } from 'lucide-react';
 
 export function DetailInteractions({ eventId, notesData, eventTasks, payments, client }: { eventId: string, notesData: any[], eventTasks: any[], payments: any[], client: any }) {
   const [noteText, setNoteText] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleTaskToggle = async (taskId: string, currentStatus: string) => {
-    await toggleTaskStatus(taskId, currentStatus, eventId);
+    try {
+      setError(null);
+      await toggleTaskStatus(taskId, currentStatus, eventId);
+    } catch {
+      setError('Failed to update task');
+    }
   };
 
   const handlePostNote = async () => {
     if (!noteText.trim()) return;
-    await addNote(eventId, noteText);
-    setNoteText('');
+    try {
+      setError(null);
+      await addNote(eventId, noteText);
+      setNoteText('');
+    } catch {
+      setError('Failed to post note');
+    }
   };
 
   const handlePayment = async (paymentId: string) => {
-    await markPaymentPaid(paymentId, eventId);
+    if (!window.confirm('Mark this payment as paid? This cannot be undone.')) return;
+    try {
+      setError(null);
+      await markPaymentPaid(paymentId, eventId);
+    } catch {
+      setError('Failed to record payment');
+    }
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start w-full">
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl text-sm font-medium">
+          {error}
+        </div>
+      )}
       <section className="bg-white rounded-xl border border-rose-100 p-5 sm:p-6 shadow-sm flex flex-col h-[500px] w-full lg:w-2/3">
          <h2 className="font-serif font-bold text-xl text-[#1C1012] mb-6 flex-shrink-0">Staff Notes</h2>
          <div className="flex-1 overflow-y-auto pr-2 flex flex-col gap-6 mb-4">

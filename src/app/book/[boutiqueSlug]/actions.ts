@@ -2,77 +2,78 @@
 
 import { db } from "@/db";
 import { clients, events, appointments, eventServices } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateMilestones } from "@/app/dashboard/events/paymentActions";
-import { sql } from "drizzle-orm";
+import { bookingSchema } from "@/lib/validations";
 
-export async function submitBooking(data: any) {
+export async function submitBooking(data: unknown) {
+  const parsed = bookingSchema.parse(data);
+
   try {
-    // 1. Create Client
-    const [client] = await db.insert(clients).values({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email || null,
-      phone: data.phone,
-      hearAboutUs: data.howFound || null,
-    }).returning();
+    const result = await db.transaction(async (tx) => {
+      // Duplicate client detection by phone
+      const existing = await tx.select().from(clients).where(eq(clients.phone, parsed.phone)).limit(1);
+      let clientRecord;
 
-    // 2. Create Event
-    const [event] = await db.insert(events).values({
-      clientId: client.id,
-      type: data.eventType,
-      date: new Date(data.eventDate).toISOString(),
-      status: 'inquiry', // Status inquiry for new bookings
-      guestCount: data.guestCount ? parseInt(data.guestCount) : null,
-      venueName: data.venue || null,
-      totalValue: 0,
-    }).returning();
+      if (existing.length > 0) {
+        clientRecord = existing[0];
+      } else {
+        const [newClient] = await tx.insert(clients).values({
+          firstName: parsed.firstName,
+          lastName: parsed.lastName,
+          email: parsed.email || null,
+          phone: parsed.phone,
+          hearAboutUs: parsed.howFound || null,
+        }).returning();
+        clientRecord = newClient;
+      }
 
-    // 3. Create Event Services
-    if (data.services && data.services.length > 0) {
-      await db.insert(eventServices).values(
-        data.services.map((service: string) => ({
-          eventId: event.id,
-          serviceType: service
-        }))
-      );
-    }
+      const [event] = await tx.insert(events).values({
+        clientId: clientRecord.id,
+        type: parsed.eventType,
+        date: new Date(parsed.eventDate).toISOString(),
+        status: 'inquiry',
+        guestCount: parsed.guestCount ? parseInt(String(parsed.guestCount)) : null,
+        venueName: parsed.venue || null,
+        totalValue: 0,
+      }).returning();
 
-    // 4. Create Appointment
-    await db.insert(appointments).values({
-      eventId: event.id,
-      clientId: client.id,
-      type: 'consultation',
-      date: new Date(data.appointmentTime),
-      status: 'scheduled', // Status scheduled
-      notes: `Preferred contact: ${data.contactMethod}`,
+      if (parsed.services && parsed.services.length > 0) {
+        await tx.insert(eventServices).values(
+          parsed.services.map((service: string) => ({
+            eventId: event.id,
+            serviceType: service
+          }))
+        );
+      }
+
+      await tx.insert(appointments).values({
+        eventId: event.id,
+        clientId: clientRecord.id,
+        type: 'consultation',
+        date: new Date(parsed.appointmentTime),
+        status: 'upcoming',
+        notes: parsed.contactMethod ? `Preferred contact: ${parsed.contactMethod}` : null,
+      });
+
+      let baseAmount = 500000;
+      await tx.update(events).set({ totalValue: baseAmount }).where(eq(events.id, event.id));
+
+      return { eventId: event.id, clientId: clientRecord.id, date: event.date, services: parsed.services, baseAmount };
     });
 
-    // 5. Mock SMS sending
-    console.log("-----------------------------------------");
-    console.log(`[Twilio Mock] SMS sent to client ${data.phone}:`);
-    console.log(`"Hi ${data.firstName}! Your consultation with Novela is confirmed for ${new Date(data.appointmentTime).toLocaleString()}."`);
-    console.log("-----------------------------------------");
-
-    console.log("-----------------------------------------");
-    console.log(`[Twilio Mock] SMS sent to owner (555-000-0000):`);
-    console.log(`"New lead! ${data.firstName} booked a consultation for ${new Date(data.appointmentTime).toLocaleString()}."`);
-    console.log("-----------------------------------------");
-
-    // 6. Generate payment milestones
-    let baseAmount = 500000; // Mock base total if none exists
-    await db.update(events).set({ totalValue: baseAmount }).where(sql`id = ${event.id}`);
     await generateMilestones({
-      id: event.id,
-      clientId: client.id,
-      date: event.date,
-      services_json: data.services || []
-    }, baseAmount);
+      id: result.eventId,
+      clientId: result.clientId,
+      date: result.date,
+      services_json: result.services || []
+    }, result.baseAmount);
 
     revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("Booking failed:", error);
-    throw new Error("Failed to submit booking");
+    return { success: false, error: "Failed to submit booking" };
   }
 }

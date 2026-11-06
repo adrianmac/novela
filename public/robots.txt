@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Allow: /book/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /login

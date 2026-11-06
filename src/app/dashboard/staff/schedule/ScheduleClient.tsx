@@ -321,6 +321,12 @@ function getAptIcon(type: string) {
 }
 
 function AddAppointmentModal({ staffId, date, onClose }: { staffId: string, date: Date, onClose: () => void }) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   const staff = STAFF.find(s => s.id === staffId);
   const [time, setTime] = useState("10:00");
   const [type, setType] = useState("consultation");
@@ -364,11 +370,11 @@ function AddAppointmentModal({ staffId, date, onClose }: { staffId: string, date
   };
 
   return (
-    <div className="fixed inset-0 bg-stone-900/40 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-stone-900/40 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-6 border-b border-stone-100">
           <h2 className="font-serif text-2xl font-bold text-stone-900">Add Appointment</h2>
-          <button onClick={onClose} className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-500">
+          <button onClick={onClose} aria-label="Close" className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-500">
             <X size={20} />
           </button>
         </div>
@@ -448,12 +454,18 @@ function AddAppointmentModal({ staffId, date, onClose }: { staffId: string, date
 
 
 function AppointmentDetailModal({ appointment, onClose }: { appointment: any, onClose: () => void }) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 bg-stone-900/40 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-stone-900/40 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-6 border-b border-stone-100">
           <h2 className="font-serif text-2xl font-bold text-stone-900">Appointment Details</h2>
-          <button onClick={onClose} className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-500">
+          <button onClick={onClose} aria-label="Close" className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-500">
             <X size={20} />
           </button>
         </div>

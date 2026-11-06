@@ -5,13 +5,16 @@ import { appointments, clients, events } from "@/db/schema";
 import { eq, gte, lte, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { STAFF } from "./shared";
+import { requireAuth } from "@/lib/auth";
+import { z } from "zod";
 
 export async function getScheduleData(startDate?: Date, endDate?: Date) {
-  // If no dates provided, use current week
+  await requireAuth();
+
   const start = startDate || new Date();
   if (!startDate) {
     const day = start.getDay();
-    const diff = start.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
     start.setDate(diff);
     start.setHours(0,0,0,0);
   }
@@ -54,6 +57,8 @@ export async function getScheduleData(startDate?: Date, endDate?: Date) {
 }
 
 export async function getClientsAndEvents() {
+  await requireAuth();
+
   const allClients = await db.select({
     id: clients.id,
     firstName: clients.firstName,
@@ -70,36 +75,50 @@ export async function getClientsAndEvents() {
   return { clients: allClients, events: allEvents };
 }
 
-export async function addAppointment(data: any) {
-  // Check for conflicts
-  // Assuming a fixed 1-hour duration for simplicity in conflict checking
-  const aptDate = new Date(data.date);
-  const endAptDate = new Date(aptDate.getTime() + 60 * 60 * 1000);
+const addAppointmentInput = z.object({
+  staffId: z.string().min(1, 'Staff is required'),
+  date: z.coerce.date(),
+  type: z.string().min(1, 'Type is required'),
+  clientId: z.union([z.string(), z.number()]).transform(String),
+  eventId: z.union([z.string(), z.number()]).transform(String),
+});
 
-  const existing = await db.select().from(appointments).where(
-    and(
-      eq(appointments.staffId, data.staffId),
-      gte(appointments.date, new Date(aptDate.getTime() - 59 * 60 * 1000)), // Conflict if starting within an hour before
-      lte(appointments.date, endAptDate)
-    )
-  );
+export async function addAppointment(data: unknown) {
+  await requireAuth();
+  const parsed = addAppointmentInput.parse(data);
 
-  if (existing.length > 0) {
-    return { error: "Staff member is already booked at this time." };
+  try {
+    const aptDate = new Date(parsed.date);
+    const endAptDate = new Date(aptDate.getTime() + 60 * 60 * 1000);
+
+    const existing = await db.select().from(appointments).where(
+      and(
+        eq(appointments.staffId, parsed.staffId),
+        gte(appointments.date, new Date(aptDate.getTime() - 59 * 60 * 1000)),
+        lte(appointments.date, endAptDate)
+      )
+    );
+
+    if (existing.length > 0) {
+      return { error: "Staff member is already booked at this time." };
+    }
+
+    const staff = STAFF.find((s: any) => s.id === parsed.staffId);
+
+    await db.insert(appointments).values({
+      eventId: parsed.eventId,
+      clientId: parsed.clientId,
+      type: parsed.type,
+      date: aptDate,
+      staffId: parsed.staffId,
+      staffName: staff?.name || "Unassigned",
+      status: "upcoming",
+    });
+
+    revalidatePath("/dashboard/staff/schedule");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to add appointment:", error);
+    return { error: "Failed to create appointment" };
   }
-
-  const staff = STAFF.find((s: any) => s.id === data.staffId);
-
-  await db.insert(appointments).values({
-    eventId: data.eventId,
-    clientId: data.clientId,
-    type: data.type,
-    date: aptDate,
-    staffId: data.staffId,
-    staffName: staff?.name || "Unassigned",
-    status: "upcoming",
-  });
-
-  revalidatePath("/dashboard/staff/schedule");
-  return { success: true };
 }

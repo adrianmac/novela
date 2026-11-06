@@ -9,10 +9,15 @@ import {
   appointments,
   inventory,
 } from '@/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { requireAuth } from '@/lib/auth';
+import { alterationStatusSchema, measurementsSchema, alterationItemSchema } from '@/lib/validations';
+import { z } from 'zod';
 
 export async function getAlterations() {
+  await requireAuth();
+
   try {
     const jobs = await db
       .select({
@@ -25,38 +30,59 @@ export async function getAlterations() {
       .innerJoin(clients, eq(alterationJobs.clientId, clients.id))
       .orderBy(desc(events.date));
 
-    // Fetch items for each job
-    const jobsWithItems = await Promise.all(
-      jobs.map(async (row) => {
-        const items = await db
-          .select()
-          .from(alterationItems)
-          .where(eq(alterationItems.jobId, row.job.id));
+    if (jobs.length === 0) return [];
 
-        const apps = await db
-          .select()
-          .from(appointments)
-          .where(and(eq(appointments.eventId, row.event.id), eq(appointments.type, 'fitting')))
-          .orderBy(desc(appointments.date));
+    const jobIds = jobs.map(j => j.job.id);
+    const eventIds = Array.from(new Set(jobs.map(j => j.event.id)));
+    const inventoryItemIds = jobs.map(j => j.job.inventoryItemId).filter(Boolean) as string[];
 
-        let inv = null;
-        if (row.job.inventoryItemId) {
-             const [fetchedInv] = await db.select().from(inventory).where(eq(inventory.id, row.job.inventoryItemId));
-             inv = fetchedInv || null;
-        }
+    const allItems = await db
+      .select()
+      .from(alterationItems)
+      .where(sql`${alterationItems.jobId} IN (${sql.join(jobIds.map(id => sql`${id}`), sql`, `)})`);
 
-        return {
-          ...row.job,
-          client: row.client,
-          event: row.event,
-          inventory: inv,
-          items,
-          fittings: apps,
-        };
-      })
-    );
+    const allFittings = await db
+      .select()
+      .from(appointments)
+      .where(and(
+        sql`${appointments.eventId} IN (${sql.join(eventIds.map(id => sql`${id}`), sql`, `)})`,
+        eq(appointments.type, 'fitting')
+      ))
+      .orderBy(desc(appointments.date));
 
-    return jobsWithItems;
+    let inventoryMap = new Map<string, typeof inventory.$inferSelect>();
+    if (inventoryItemIds.length > 0) {
+      const invRows = await db
+        .select()
+        .from(inventory)
+        .where(sql`${inventory.id} IN (${sql.join(inventoryItemIds.map(id => sql`${id}`), sql`, `)})`);
+      for (const row of invRows) {
+        inventoryMap.set(row.id, row);
+      }
+    }
+
+    const itemsByJob = new Map<string, typeof allItems>();
+    for (const item of allItems) {
+      const arr = itemsByJob.get(item.jobId) || [];
+      arr.push(item);
+      itemsByJob.set(item.jobId, arr);
+    }
+
+    const fittingsByEvent = new Map<string, typeof allFittings>();
+    for (const fitting of allFittings) {
+      const arr = fittingsByEvent.get(fitting.eventId) || [];
+      arr.push(fitting);
+      fittingsByEvent.set(fitting.eventId, arr);
+    }
+
+    return jobs.map((row) => ({
+      ...row.job,
+      client: row.client,
+      event: row.event,
+      inventory: row.job.inventoryItemId ? inventoryMap.get(row.job.inventoryItemId) || null : null,
+      items: itemsByJob.get(row.job.id) || [],
+      fittings: fittingsByEvent.get(row.event.id) || [],
+    }));
   } catch (error) {
     console.error('Failed to get alterations:', error);
     throw new Error('Failed to fetch alteration jobs');
@@ -64,6 +90,9 @@ export async function getAlterations() {
 }
 
 export async function updateAlterationStatus(jobId: string, status: string) {
+  await requireAuth();
+  alterationStatusSchema.parse({ jobId, status });
+
   try {
     await db
       .update(alterationJobs)
@@ -74,11 +103,14 @@ export async function updateAlterationStatus(jobId: string, status: string) {
     return { success: true };
   } catch (error) {
     console.error('Failed to update alteration status:', error);
-    throw new Error('Failed to update status');
+    return { success: false, error: 'Failed to update status' };
   }
 }
 
 export async function updateMeasurements(jobId: string, measurements: string) {
+  await requireAuth();
+  measurementsSchema.parse({ jobId, measurements });
+
   try {
     await db
       .update(alterationJobs)
@@ -89,26 +121,32 @@ export async function updateMeasurements(jobId: string, measurements: string) {
     return { success: true };
   } catch (error) {
     console.error('Failed to update measurements:', error);
-    throw new Error('Failed to update measurements');
+    return { success: false, error: 'Failed to update measurements' };
   }
 }
 
 export async function toggleAlterationItem(itemId: string, isCompleted: boolean) {
+  await requireAuth();
+  z.string().uuid().parse(itemId);
+
   try {
     await db
       .update(alterationItems)
-      .set({ isCompleted: isCompleted ? 1 : 0 })
+      .set({ isCompleted })
       .where(eq(alterationItems.id, itemId));
 
     revalidatePath('/dashboard/alterations');
     return { success: true };
   } catch (error) {
     console.error('Failed to toggle alteration item:', error);
-    throw new Error('Failed to toggle item status');
+    return { success: false, error: 'Failed to toggle item status' };
   }
 }
 
 export async function addAlterationItem(jobId: string, taskName: string, description: string, estimatedPrice: number) {
+  await requireAuth();
+  alterationItemSchema.parse({ jobId, taskName, description, estimatedPrice });
+
   try {
     await db.insert(alterationItems).values({
       jobId,
@@ -117,7 +155,6 @@ export async function addAlterationItem(jobId: string, taskName: string, descrip
       estimatedPrice,
     });
 
-    // Update job total price
     const items = await db.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
     const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
     await db.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
@@ -126,23 +163,26 @@ export async function addAlterationItem(jobId: string, taskName: string, descrip
     return { success: true };
   } catch (error) {
     console.error('Failed to add alteration item:', error);
-    throw new Error('Failed to add item');
+    return { success: false, error: 'Failed to add item' };
   }
 }
 
 export async function deleteAlterationItem(itemId: string, jobId: string) {
-    try {
-      await db.delete(alterationItems).where(eq(alterationItems.id, itemId));
+  await requireAuth();
+  z.string().uuid().parse(itemId);
+  z.string().uuid().parse(jobId);
 
-      // Update job total price
-      const items = await db.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
-      const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
-      await db.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
+  try {
+    await db.delete(alterationItems).where(eq(alterationItems.id, itemId));
 
-      revalidatePath('/dashboard/alterations');
-      return { success: true };
-    } catch (error) {
-      console.error('Failed to delete alteration item:', error);
-      throw new Error('Failed to delete item');
-    }
+    const items = await db.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
+    const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
+    await db.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
+
+    revalidatePath('/dashboard/alterations');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete alteration item:', error);
+    return { success: false, error: 'Failed to delete item' };
+  }
 }

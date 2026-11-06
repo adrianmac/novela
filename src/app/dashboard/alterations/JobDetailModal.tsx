@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, Calendar, DollarSign, CheckCircle2, Clock, AlertCircle, Plus } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { updateMeasurements, toggleAlterationItem, addAlterationItem } from './actions';
@@ -20,6 +20,14 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
   const [showAddItem, setShowAddItem] = useState(false);
   const [newItemName, setNewItemName] = useState('');
   const [newItemPrice, setNewItemPrice] = useState('');
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
 
   useEffect(() => {
     if (job.measurementsJson) {
@@ -91,7 +99,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto" role="dialog" aria-modal="true">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col relative my-auto">
 
         {/* Header */}
@@ -119,6 +127,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="p-2 text-rose-400 hover:text-rose-900 hover:bg-rose-100 rounded-full transition-colors h-13 sm:h-11 w-13 sm:w-11 flex items-center justify-center touch-manipulation"
           >
             <X className="w-6 h-6" />

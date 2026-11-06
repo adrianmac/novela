@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  LayoutDashboard, Calendar, Users, Scissors, Shirt,
-  MapPin, PackageSearch, CreditCard, UserCircle, Settings,
+  LayoutDashboard, Calendar, Users, Scissors,
+  PackageSearch, UserCircle,
   Bell
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
@@ -15,20 +15,16 @@ function cn(...inputs: ClassValue[]) {
 const navItems = [
   { name: 'Overview', icon: LayoutDashboard, href: '/dashboard', active: true },
   { name: 'Events', icon: Calendar, href: '/dashboard/events', badge: 12 },
-  { name: 'Clients', icon: Users, href: '/dashboard/clients' },
+  { name: 'Clients', icon: Users, href: '/dashboard/clients/new' },
 ];
 
 const serviceItems = [
   { name: 'Alterations', icon: Scissors, href: '/dashboard/alterations', badge: 4 },
-  { name: 'Dress Rentals', icon: Shirt, href: '/dashboard/rentals' },
-  { name: 'Event Planning', icon: MapPin, href: '/dashboard/planning' },
 ];
 
 const operationItems = [
   { name: 'Inventory', icon: PackageSearch, href: '/dashboard/inventory' },
-  { name: 'Payments', icon: CreditCard, href: '/dashboard/payments', badgeRed: 3 },
-  { name: 'Staff', icon: UserCircle, href: '/dashboard/staff' },
-  { name: 'Settings', icon: Settings, href: '/dashboard/settings' },
+  { name: 'Staff', icon: UserCircle, href: '/dashboard/staff/schedule' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -81,7 +77,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                  <item.icon className="w-5 h-5" />
               </div>
                <span className="hidden lg:block flex-1 text-sm font-medium">{item.name}</span>
-               {item.badgeRed && <span className="hidden lg:flex items-center justify-center bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">{item.badgeRed}</span>}
              </a>
           ))}
         </div>
@@ -138,7 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <span className="text-[10px] font-medium">Events</span>
           <span className="absolute top-1 right-3 w-2 h-2 bg-rose-500 rounded-full"></span>
         </a>
-        <a href="/dashboard/clients" className="flex flex-col items-center justify-center w-16 h-13 text-[#8B7355] touch-manipulation">
+        <a href="/dashboard/clients/new" className="flex flex-col items-center justify-center w-16 h-13 text-[#8B7355] touch-manipulation">
           <Users className="w-5 h-5 mb-1" />
           <span className="text-[10px] font-medium">Clients</span>
         </a>
@@ -146,9 +141,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <PackageSearch className="w-5 h-5 mb-1" />
           <span className="text-[10px] font-medium">Inventory</span>
         </a>
-        <a href="/dashboard/menu" className="flex flex-col items-center justify-center w-16 h-13 text-[#8B7355] touch-manipulation">
-          <Settings className="w-5 h-5 mb-1" />
-          <span className="text-[10px] font-medium">More</span>
+        <a href="/dashboard/staff/schedule" className="flex flex-col items-center justify-center w-16 h-13 text-[#8B7355] touch-manipulation">
+          <UserCircle className="w-5 h-5 mb-1" />
+          <span className="text-[10px] font-medium">Staff</span>
         </a>
       </nav>
     </div>

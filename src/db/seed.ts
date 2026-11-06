@@ -233,8 +233,8 @@ async function seedAlterations() {
 
     // Add items for the job
     await db.insert(schema.alterationItems).values([
-      { jobId: insertedJob.id, taskName: 'Hem', description: 'Take up front hem', estimatedPrice: 5000, isCompleted: job.status === 'complete' ? 1 : 0 },
-      { jobId: insertedJob.id, taskName: 'Bustle', description: 'Add 3-point over-bustle', estimatedPrice: job.totalEstimatedPrice - 5000, isCompleted: job.status === 'complete' ? 1 : 0 },
+      { jobId: insertedJob.id, taskName: 'Hem', description: 'Take up front hem', estimatedPrice: 5000, isCompleted: job.status === 'complete' },
+      { jobId: insertedJob.id, taskName: 'Bustle', description: 'Add 3-point over-bustle', estimatedPrice: job.totalEstimatedPrice - 5000, isCompleted: job.status === 'complete' },
     ]);
   }
 }

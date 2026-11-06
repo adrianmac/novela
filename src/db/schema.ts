@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, uuid, date, boolean, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, uuid, date, boolean, jsonb, index, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const clients = pgTable('clients', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -8,65 +8,90 @@ export const clients = pgTable('clients', {
   phone: text('phone'),
   secondaryContactName: text('secondary_contact_name'),
   secondaryContactPhone: text('secondary_contact_phone'),
-  hearAboutUs: text('hear_about_us'), // Walk-in, Instagram, Google, Facebook, Referral, Other
+  hearAboutUs: text('hear_about_us'),
   referredBy: text('referred_by'),
   lastActivityDate: timestamp('last_activity_date').defaultNow().notNull(),
   winBackSentAt: timestamp('win_back_sent_at'),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  phoneIdx: uniqueIndex('clients_phone_idx').on(table.phone),
+  lastActivityIdx: index('clients_last_activity_idx').on(table.lastActivityDate),
+}));
 
 export const events = pgTable('events', {
   id: uuid('id').defaultRandom().primaryKey(),
-  clientId: uuid('client_id').references(() => clients.id).notNull(),
-  type: text('type').notNull(), // 'wedding' or 'quinceanera'
+  clientId: uuid('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  type: text('type').notNull(),
   date: date('date').notNull(),
-  status: text('status').notNull(), // inquiry, consultation_scheduled, active, in_progress, completed, cancelled
+  status: text('status').notNull(),
   guestCount: integer('guest_count'),
   venueName: text('venue_name'),
   venueCity: text('venue_city'),
-  budgetRange: text('budget_range'), // Under $2,000 | $2,000-$4,000 | $4,000-$7,000 | $7,000-$10,000 | $10,000+
-  totalValue: integer('total_value').notNull().default(0), // in cents
+  budgetRange: text('budget_range'),
+  totalValue: integer('total_value').notNull().default(0),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  clientIdIdx: index('events_client_id_idx').on(table.clientId),
+  statusIdx: index('events_status_idx').on(table.status),
+  dateIdx: index('events_date_idx').on(table.date),
+}));
 
 export const eventServices = pgTable('event_services', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
-  serviceType: text('service_type').notNull(), // dress_rental, alterations, planning, decoration
-});
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  serviceType: text('service_type').notNull(),
+}, (table) => ({
+  eventIdIdx: index('event_services_event_id_idx').on(table.eventId),
+}));
 
 export const appointments = pgTable('appointments', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
-  clientId: uuid('client_id').references(() => clients.id).notNull(),
-  type: text('type').notNull(), // consultation, fitting, pickup
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  clientId: uuid('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  type: text('type').notNull(),
   date: timestamp('date').notNull(),
-  staffId: text('staff_id'), // clerk user id
+  staffId: text('staff_id'),
   staffName: text('staff_name'),
   notes: text('notes'),
-  status: text('status').notNull(), // upcoming, confirmed, checked_in, completed, cancelled, reschedule_requested
+  status: text('status').notNull(),
   reminder24hSent: boolean('reminder_24h_sent').default(false).notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  eventIdIdx: index('appointments_event_id_idx').on(table.eventId),
+  clientIdIdx: index('appointments_client_id_idx').on(table.clientId),
+  staffIdIdx: index('appointments_staff_id_idx').on(table.staffId),
+  dateIdx: index('appointments_date_idx').on(table.date),
+  statusIdx: index('appointments_status_idx').on(table.status),
+}));
 
 export const payments = pgTable('payments', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
-  clientId: uuid('client_id').references(() => clients.id).notNull(),
-  milestone: text('milestone').notNull(), // Deposit, 50% Milestone, Final Payment
-  amount: integer('amount').notNull(), // in cents
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  clientId: uuid('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  milestone: text('milestone').notNull(),
+  amount: integer('amount').notNull(),
   dueDate: date('due_date').notNull(),
-  status: text('status').notNull(), // paid, pending, overdue
+  status: text('status').notNull(),
   paidAt: timestamp('paid_at'),
-});
+}, (table) => ({
+  eventIdIdx: index('payments_event_id_idx').on(table.eventId),
+  clientIdIdx: index('payments_client_id_idx').on(table.clientId),
+  statusIdx: index('payments_status_idx').on(table.status),
+  dueDateIdx: index('payments_due_date_idx').on(table.dueDate),
+}));
 
 export const tasks = pgTable('tasks', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
   title: text('title').notNull(),
-  status: text('status').notNull(), // open, completed
+  status: text('status').notNull(),
   dueDate: date('due_date'),
-});
+}, (table) => ({
+  eventIdIdx: index('tasks_event_id_idx').on(table.eventId),
+}));
 
 export const inventory = pgTable('inventory', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -74,10 +99,10 @@ export const inventory = pgTable('inventory', {
   name: text('name').notNull(),
   description: text('description'),
   size: text('size'),
-  category: text('category').notNull(), // bridal, quinceanera, decoration
-  rentalPrice: integer('rental_price').notNull(), // in cents
-  depositAmount: integer('deposit_amount').notNull(), // in cents
-  status: text('status').notNull().default('available'), // available, reserved, rented, cleaning, overdue
+  category: text('category').notNull(),
+  rentalPrice: integer('rental_price').notNull(),
+  depositAmount: integer('deposit_amount').notNull(),
+  status: text('status').notNull().default('available'),
   imageUrl: text('image_url'),
   notes: text('notes'),
   lastCleanedDate: date('last_cleaned_date'),
@@ -86,46 +111,59 @@ export const inventory = pgTable('inventory', {
 
 export const inventoryRentals = pgTable('inventory_rentals', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
-  itemId: uuid('item_id').references(() => inventory.id).notNull(),
-  status: text('status').notNull(), // reserved, rented, returned, overdue
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  itemId: uuid('item_id').references(() => inventory.id, { onDelete: 'cascade' }).notNull(),
+  status: text('status').notNull(),
   pickupDate: date('pickup_date').notNull(),
   returnDate: date('return_date').notNull(),
-  conditionOnReturn: text('condition_on_return'), // Excellent, Good, Minor wear, Damage noted
+  conditionOnReturn: text('condition_on_return'),
   damageNotes: text('damage_notes'),
   returnedAt: timestamp('returned_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  eventIdIdx: index('inventory_rentals_event_id_idx').on(table.eventId),
+  itemIdIdx: index('inventory_rentals_item_id_idx').on(table.itemId),
+  statusIdx: index('inventory_rentals_status_idx').on(table.status),
+  eventItemUniq: uniqueIndex('inventory_rentals_event_item_uniq').on(table.eventId, table.itemId),
+}));
 
 export const alterationJobs = pgTable('alteration_jobs', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
-  clientId: uuid('client_id').references(() => clients.id).notNull(),
-  inventoryItemId: uuid('inventory_item_id').references(() => inventory.id), // Optional, if they are altering a rented dress
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  clientId: uuid('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  inventoryItemId: uuid('inventory_item_id').references(() => inventory.id, { onDelete: 'set null' }),
   garmentDescription: text('garment_description').notNull(),
-  status: text('status').notNull().default('measurement_needed'), // measurement_needed, in_progress, fitting_scheduled, complete
+  status: text('status').notNull().default('measurement_needed'),
   seamstressId: text('seamstress_id'),
   seamstressName: text('seamstress_name'),
-  measurementsJson: text('measurements_json'), // Storing as JSON string: Bust, Waist, Hips, Height, etc.
+  measurementsJson: jsonb('measurements_json'),
   notes: text('notes'),
-  totalEstimatedPrice: integer('total_estimated_price').notNull().default(0), // in cents
+  totalEstimatedPrice: integer('total_estimated_price').notNull().default(0),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  eventIdIdx: index('alteration_jobs_event_id_idx').on(table.eventId),
+  clientIdIdx: index('alteration_jobs_client_id_idx').on(table.clientId),
+}));
 
 export const alterationItems = pgTable('alteration_items', {
   id: uuid('id').defaultRandom().primaryKey(),
-  jobId: uuid('job_id').references(() => alterationJobs.id).notNull(),
-  taskName: text('task_name').notNull(), // Hem, Bustle, Take in waist, Let out, Custom...
+  jobId: uuid('job_id').references(() => alterationJobs.id, { onDelete: 'cascade' }).notNull(),
+  taskName: text('task_name').notNull(),
   description: text('description'),
-  estimatedPrice: integer('estimated_price').notNull().default(0), // in cents
-  isCompleted: integer('is_completed').notNull().default(0), // 0 or 1 for boolean
+  estimatedPrice: integer('estimated_price').notNull().default(0),
+  isCompleted: boolean('is_completed').notNull().default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  jobIdIdx: index('alteration_items_job_id_idx').on(table.jobId),
+}));
 
 export const jobLogs = pgTable('job_logs', {
   id: uuid('id').defaultRandom().primaryKey(),
   jobName: text('job_name').notNull(),
-  status: text('status').notNull(), // success, failed
+  status: text('status').notNull(),
   details: jsonb('details'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  jobNameIdx: index('job_logs_job_name_idx').on(table.jobName),
+  createdAtIdx: index('job_logs_created_at_idx').on(table.createdAt),
+}));

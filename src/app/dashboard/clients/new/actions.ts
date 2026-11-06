@@ -2,82 +2,92 @@
 
 import { db } from "@/db";
 import { clients, events, eventServices, appointments } from "@/db/schema";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateMilestones } from "@/app/dashboard/events/paymentActions";
+import { requireAuth } from "@/lib/auth";
+import { intakeFormSchema } from "@/lib/validations";
 
-export async function submitIntakeForm(data: any) {
+export async function submitIntakeForm(data: unknown) {
+  await requireAuth();
+
+  const parsed = intakeFormSchema.parse(data);
+
   try {
-    // 1. Create client record
-    const [newClient] = await db.insert(clients).values({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email || null,
-      phone: data.phone,
-      secondaryContactName: data.secondaryContactName || null,
-      secondaryContactPhone: data.secondaryContactPhone || null,
-      hearAboutUs: data.hearAboutUs || null,
-      referredBy: data.referredBy || null,
-    }).returning();
+    const result = await db.transaction(async (tx) => {
+      // Duplicate client detection by phone
+      const existing = await tx.select().from(clients).where(eq(clients.phone, parsed.phone)).limit(1);
+      let clientRecord;
 
-    // 2. Create event record
-    const [newEvent] = await db.insert(events).values({
-      clientId: newClient.id,
-      type: data.eventType,
-      date: data.eventDate,
-      status: 'consultation_scheduled',
-      guestCount: data.guestCount ? parseInt(data.guestCount) : null,
-      venueName: data.venueName || null,
-      venueCity: data.venueCity || null,
-      budgetRange: data.budgetRange || null,
-      totalValue: 0, // Will be updated later during planning
-    }).returning();
+      if (existing.length > 0) {
+        clientRecord = existing[0];
+      } else {
+        const [newClient] = await tx.insert(clients).values({
+          firstName: parsed.firstName,
+          lastName: parsed.lastName,
+          email: parsed.email || null,
+          phone: parsed.phone,
+          secondaryContactName: parsed.secondaryContactName || null,
+          secondaryContactPhone: parsed.secondaryContactPhone || null,
+          hearAboutUs: parsed.hearAboutUs || null,
+          referredBy: parsed.referredBy || null,
+        }).returning();
+        clientRecord = newClient;
+      }
 
-    // 3. Create event services
-    if (data.services && data.services.length > 0) {
-      await db.insert(eventServices).values(
-        data.services.map((service: string) => ({
+      const [newEvent] = await tx.insert(events).values({
+        clientId: clientRecord.id,
+        type: parsed.eventType,
+        date: parsed.eventDate,
+        status: 'consultation_scheduled',
+        guestCount: parsed.guestCount ? parseInt(String(parsed.guestCount)) : null,
+        venueName: parsed.venueName || null,
+        venueCity: parsed.venueCity || null,
+        budgetRange: parsed.budgetRange || null,
+        totalValue: 0,
+      }).returning();
+
+      if (parsed.services && parsed.services.length > 0) {
+        await tx.insert(eventServices).values(
+          parsed.services.map((service: string) => ({
+            eventId: newEvent.id,
+            serviceType: service,
+          }))
+        );
+      }
+
+      if (parsed.appointmentDate && parsed.staffId) {
+        await tx.insert(appointments).values({
           eventId: newEvent.id,
-          serviceType: service,
-        }))
-      );
-    }
+          clientId: clientRecord.id,
+          type: 'consultation',
+          date: new Date(parsed.appointmentDate),
+          staffId: parsed.staffId,
+          staffName: parsed.staffName || 'Unassigned',
+          notes: parsed.appointmentNotes || null,
+          status: 'upcoming',
+        });
+      }
 
-    // 4. Create appointment record
-    if (data.appointmentDate && data.staffId) {
-      await db.insert(appointments).values({
-        eventId: newEvent.id,
-        clientId: newClient.id,
-        type: 'consultation',
-        date: new Date(data.appointmentDate),
-        staffId: data.staffId,
-        staffName: data.staffName || 'Unassigned',
-        notes: data.appointmentNotes || null,
-        status: 'upcoming',
-      });
-    }
+      let baseAmount = parsed.budgetRange ? parseInt(String(parsed.budgetRange).replace(/[^0-9]/g, '')) * 100 : 500000;
+      if (isNaN(baseAmount)) baseAmount = 500000;
 
-    // 5. Send confirmation SMS via Twilio (Mock)
-    console.log(`[Twilio Mock] Sending SMS to ${data.phone}: Confirmation for ${data.firstName}'s consultation booked on ${data.appointmentDate}.`);
+      await tx.update(events).set({ totalValue: baseAmount }).where(eq(events.id, newEvent.id));
 
-    // 6. Generate payment milestones
-    let baseAmount = data.budgetRange ? parseInt(data.budgetRange.replace(/[^0-9]/g, '')) * 100 : 500000; // Mock base total if none exists
-    if (isNaN(baseAmount)) baseAmount = 500000;
-
-    // Update event total value for milestones
-    await db.update(events).set({ totalValue: baseAmount }).where(sql`id = ${newEvent.id}`);
+      return { eventId: newEvent.id, clientId: clientRecord.id, date: newEvent.date, services: parsed.services, baseAmount };
+    });
 
     await generateMilestones({
-      id: newEvent.id,
-      clientId: newClient.id,
-      date: newEvent.date,
-      services_json: data.services || []
-    }, baseAmount);
+      id: result.eventId,
+      clientId: result.clientId,
+      date: result.date,
+      services_json: result.services || []
+    }, result.baseAmount);
 
     revalidatePath('/dashboard/events');
     revalidatePath('/dashboard');
 
-    return { success: true, eventId: newEvent.id };
+    return { success: true, eventId: result.eventId };
   } catch (error) {
     console.error("Failed to submit intake form:", error);
     return { success: false, error: "Failed to create client and event" };
@@ -94,7 +104,6 @@ export async function getVenues(query: string) {
   return results.map(r => r.venueName).filter(Boolean);
 }
 
-// Mock staff fetching for available consultation slots
 export async function getAvailableStaff() {
   return [
     { id: 'u1', name: 'Isabel M.', role: 'Senior Coordinator' },

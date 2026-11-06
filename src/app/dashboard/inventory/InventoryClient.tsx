@@ -1,11 +1,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Search, Filter, Plus, Image as ImageIcon, CheckCircle2, AlertTriangle, Clock, RotateCcw } from 'lucide-react';
 import { addInventoryItem, reserveItem, markItemStatus, logReturn, searchEvents, checkDressAvailability } from './actions';
 
 export default function InventoryClient({ initialItems }: { initialItems: any[] }) {
+  const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [tab, setTab] = useState('All');
   const [search, setSearch] = useState('');
@@ -36,6 +38,19 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
   // Detail
   const [detailModalOpen, setDetailModalOpen] = useState<{item: any} | null>(null);
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (detailModalOpen) setDetailModalOpen(null);
+        else if (returnModalOpen) setReturnModalOpen(null);
+        else if (reserveModalOpen) { setReserveModalOpen(null); setSelectedEvent(null); setEventSearch(''); setReserveError(''); setAvailabilityCheck(null); }
+        else if (addModalOpen) setAddModalOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [detailModalOpen, returnModalOpen, reserveModalOpen, addModalOpen]);
+
   const TABS = ['All', 'Bridal', 'Quinceañera', 'Decoration'];
   const STATUSES = ['All', 'Available', 'Reserved', 'Rented', 'Cleaning', 'Overdue'];
 
@@ -65,7 +80,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
     setIsAdding(false);
     if (res.success) {
       setAddModalOpen(false);
-      window.location.reload();
+      router.refresh();
     } else {
       alert(res.error || "Failed to add item");
     }
@@ -93,7 +108,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
     setIsReserving(false);
     if (res.success) {
       setReserveModalOpen(null);
-      window.location.reload();
+      router.refresh();
     } else {
       setReserveError(res.error || 'Failed to reserve item');
     }
@@ -140,7 +155,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
     setIsReturning(false);
     if (res.success) {
       setReturnModalOpen(null);
-      window.location.reload();
+      router.refresh();
     } else {
       alert("Failed to log return");
     }
@@ -265,7 +280,10 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                   </button>
                 )}
                 {item.status === 'reserved' && (
-                  <button onClick={() => markItemStatus(item.id, 'rented').then(() => window.location.reload())} className="h-13 sm:h-11 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors shadow-sm">
+                  <button onClick={async () => {
+                    try { await markItemStatus(item.id, 'rented'); router.refresh(); }
+                    catch { alert('Failed to update status'); }
+                  }} className="h-13 sm:h-11 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors shadow-sm">
                     Mark picked up
                   </button>
                 )}
@@ -285,7 +303,10 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                   </div>
                 )}
                 {item.status === 'cleaning' && (
-                  <button onClick={() => markItemStatus(item.id, 'available').then(() => window.location.reload())} className="h-13 sm:h-11 bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors border border-blue-200 flex items-center justify-center gap-2">
+                  <button onClick={async () => {
+                    try { await markItemStatus(item.id, 'available'); router.refresh(); }
+                    catch { alert('Failed to update status'); }
+                  }} className="h-13 sm:h-11 bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors border border-blue-200 flex items-center justify-center gap-2">
                     <CheckCircle2 className="w-4 h-4" /> Mark cleaned
                   </button>
                 )}
@@ -302,7 +323,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
 
       {/* ADD ITEM MODAL */}
       {addModalOpen && (
-        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-serif font-bold text-rose-950 mb-4 border-b border-rose-100 pb-2">Add Inventory Item</h2>
             <div className="space-y-4">
@@ -357,7 +378,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
 
       {/* RESERVE MODAL */}
       {reserveModalOpen && (
-        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 sm:p-8 relative">
             <h2 className="text-xl font-serif font-bold text-rose-950 mb-4 border-b border-rose-100 pb-2">Reserve {reserveModalOpen.item.sku}</h2>
             <p className="text-sm text-gray-600 mb-4 font-semibold">{reserveModalOpen.item.name}</p>
@@ -478,7 +499,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
 
       {/* RETURN MODAL */}
       {returnModalOpen && (
-        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 sm:p-8 relative">
             <h2 className="text-xl font-serif font-bold text-rose-950 mb-4 border-b border-rose-100 pb-2">Log Return: {returnModalOpen.item.sku}</h2>
             <div className="space-y-4">
@@ -517,11 +538,11 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
 
       {/* DETAIL MODAL */}
       {detailModalOpen && (
-        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-rose-100 bg-rose-50 flex justify-between items-center">
               <h2 className="text-2xl font-serif font-bold text-rose-950">{detailModalOpen.item.name}</h2>
-              <button onClick={() => setDetailModalOpen(null)} className="h-10 w-10 sm:h-8 sm:w-8 bg-white rounded-full flex items-center justify-center font-bold text-gray-500 shadow-sm border border-rose-200 touch-manipulation hover:bg-rose-100">✕</button>
+              <button onClick={() => setDetailModalOpen(null)} aria-label="Close" className="h-10 w-10 sm:h-8 sm:w-8 bg-white rounded-full flex items-center justify-center font-bold text-gray-500 shadow-sm border border-rose-200 touch-manipulation hover:bg-rose-100">✕</button>
             </div>
             <div className="p-6 overflow-y-auto">
               <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-6">
