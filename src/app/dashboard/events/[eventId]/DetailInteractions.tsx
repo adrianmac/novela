@@ -139,7 +139,7 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
            <div className="p-2">
              {eventTasks.map((t: Task) => {
                const checked = t.status === 'completed';
-               const overdue = new Date(t.dueDate) < new Date() && !checked;
+               const overdue = t.dueDate ? new Date(t.dueDate) < new Date() && !checked : false;
                return (
                  <label key={t.id} className="flex items-start gap-3 p-3 hover:bg-stone-50 rounded-lg cursor-pointer touch-manipulation group">
                    <div

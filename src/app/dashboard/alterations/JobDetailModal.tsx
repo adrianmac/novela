@@ -33,7 +33,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
   useEffect(() => {
     if (job.measurementsJson) {
       try {
-        setMeasurements(JSON.parse(job.measurementsJson));
+        setMeasurements(JSON.parse(job.measurementsJson as string));
       } catch (e) {
         console.error('Failed to parse measurements', e);
       }

@@ -138,7 +138,6 @@ export interface StaffMember {
 export interface NoteDisplay {
   id: string;
   text: string;
-  createdAt: Date;
   author: string;
   initials: string;
   role: string;
@@ -185,7 +184,7 @@ export interface ScheduleData {
 
 export interface AvailabilityResult {
   available: boolean;
-  conflicts: Array<{
+  conflicts?: Array<{
     pickupDate: string;
     returnDate: string;
     clientName: string;

@@ -56,7 +56,7 @@ export default function InventoryClient({ initialItems }: { initialItems: Invent
   const STATUSES = ['All', 'Available', 'Reserved', 'Rented', 'Cleaning', 'Overdue'];
 
   // Extract unique sizes for the filter
-  const SIZES = ['All', ...Array.from(new Set(items.map(i => i.size).filter(Boolean)))];
+  const SIZES = ['All', ...Array.from(new Set(items.map(i => i.size).filter((s): s is string => Boolean(s))))];
 
   // Filtering logic
   const filteredItems = items.filter(item => {
@@ -452,7 +452,7 @@ export default function InventoryClient({ initialItems }: { initialItems: Invent
                           <AlertTriangle className="w-5 h-5 text-red-600" />
                           Unavailable
                         </div>
-                        {availabilityCheck.conflicts.map((c: AvailabilityResult['conflicts'][number], i: number) => (
+                        {availabilityCheck.conflicts?.map((c, i: number) => (
                           <div key={i} className="mb-3 font-medium text-red-700/80">
                             This dress is already reserved from {new Date(c.pickupDate).toLocaleDateString()} to {new Date(c.returnDate).toLocaleDateString()} for {c.clientName}.
                           </div>
@@ -491,7 +491,7 @@ export default function InventoryClient({ initialItems }: { initialItems: Invent
             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-rose-50">
               <button onClick={() => {setReserveModalOpen(null); setSelectedEvent(null); setEventSearch(''); setReserveError(''); setAvailabilityCheck(null);}} className="h-13 sm:h-11 px-4 text-stone-500 font-bold hover:bg-stone-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
               {selectedEvent && (
-                <button onClick={handleReserve} disabled={isReserving || isCheckingAvailability || (availabilityCheck && !availabilityCheck.available)} className="h-13 sm:h-11 px-6 bg-stone-900 text-white font-bold rounded-xl hover:bg-stone-800 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
+                <button onClick={handleReserve} disabled={isReserving || isCheckingAvailability || !!(availabilityCheck && !availabilityCheck.available)} className="h-13 sm:h-11 px-6 bg-stone-900 text-white font-bold rounded-xl hover:bg-stone-800 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
                   {isReserving ? 'Reserving...' : 'Confirm Reservation'}
                 </button>
               )}
