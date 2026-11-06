@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { X, Calendar, DollarSign, CheckCircle2, Clock, AlertCircle, Plus } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { updateMeasurements, toggleAlterationItem, addAlterationItem } from './actions';
+import type { AlterationJobWithRelations, AlterationItem } from '@/lib/types';
 
 interface JobDetailModalProps {
-  job: any;
+  job: AlterationJobWithRelations;
   onClose: () => void;
   onStatusChange: (jobId: string, newStatus: string) => void;
 }
@@ -56,7 +57,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
     }
   };
 
-  const handleToggleItem = async (itemId: string, currentStatus: number) => {
+  const handleToggleItem = async (itemId: string, currentStatus: boolean) => {
     try {
       await toggleAlterationItem(itemId, !currentStatus);
     } catch (e) {
@@ -81,7 +82,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
     }
   };
 
-  const totalPrice = job.items ? job.items.reduce((sum: number, item: any) => sum + item.estimatedPrice, 0) : 0;
+  const totalPrice = job.items ? job.items.reduce((sum: number, item: AlterationItem) => sum + item.estimatedPrice, 0) : 0;
 
   const nextStatusLabel: Record<string, { label: string, next: string }> = {
     'measurement_needed': { label: 'Start Alterations', next: 'in_progress' },
@@ -118,8 +119,8 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
                 {daysUntilEvent} days remaining
               </span>
             </div>
-            <p className="mt-4 font-medium text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100 flex flex-col gap-1">
-              <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Garment</span>
+            <p className="mt-4 font-medium text-stone-900 bg-stone-50 p-3 rounded-lg border border-stone-100 flex flex-col gap-1">
+              <span className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Garment</span>
               {job.garmentDescription}
               {job.inventory && (
                 <span className="text-xs text-rose-600 font-semibold">SKU: {job.inventory.sku}</span>
@@ -136,36 +137,36 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-gray-50/30">
+        <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-stone-50/30">
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             {/* Left Column: Measurements */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg text-gray-900">Measurements (inches)</h3>
+                <h3 className="font-semibold text-lg text-stone-900">Measurements (inches)</h3>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+              <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
                 {MEASUREMENT_FIELDS.map(field => (
                   <div key={field}>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{field}</label>
+                    <label className="block text-xs font-medium text-stone-500 mb-1">{field}</label>
                     <input
                       type="number"
                       step="0.1"
                       value={measurements[field] || ''}
                       onChange={(e) => setMeasurements({...measurements, [field]: e.target.value})}
-                      className="w-full h-13 sm:h-11 rounded-lg border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 touch-manipulation"
+                      className="w-full h-13 sm:h-11 rounded-lg border-stone-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 touch-manipulation"
                       placeholder="--"
                     />
                   </div>
                 ))}
                 <div className="col-span-2">
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Notes</label>
+                  <label className="block text-xs font-medium text-stone-500 mb-1">Notes</label>
                   <textarea
                     value={measurements['Notes'] || ''}
                     onChange={(e) => setMeasurements({...measurements, ['Notes']: e.target.value})}
-                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 min-h-[80px]"
+                    className="w-full rounded-lg border-stone-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 min-h-[80px]"
                     placeholder="Any specific fit requests..."
                   />
                 </div>
@@ -173,7 +174,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
               <button
                 onClick={handleSaveMeasurements}
                 disabled={isSaving}
-                className="w-full bg-gray-900 hover:bg-black text-white px-4 py-2 rounded-lg font-medium h-13 sm:h-11 touch-manipulation disabled:opacity-50"
+                className="w-full bg-stone-900 hover:bg-black text-white px-4 py-2 rounded-lg font-medium h-13 sm:h-11 touch-manipulation disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Record Measurements'}
               </button>
@@ -185,40 +186,40 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
               {/* Work Items */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-lg text-gray-900">Work Items</h3>
-                  <span className="font-semibold text-gray-900 bg-gray-100 px-3 py-1 rounded-full text-sm">
+                  <h3 className="font-semibold text-lg text-stone-900">Work Items</h3>
+                  <span className="font-semibold text-stone-900 bg-stone-100 px-3 py-1 rounded-full text-sm">
                     Est. Total: ${(totalPrice / 100).toFixed(2)}
                   </span>
                 </div>
 
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                  <ul className="divide-y divide-gray-100">
-                    {job.items?.map((item: any) => (
-                      <li key={item.id} className="p-3 sm:p-4 hover:bg-gray-50 transition-colors flex items-start gap-3">
+                <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+                  <ul className="divide-y divide-stone-100">
+                    {job.items?.map((item: AlterationItem) => (
+                      <li key={item.id} className="p-3 sm:p-4 hover:bg-stone-50 transition-colors flex items-start gap-3">
                         <button
                           onClick={() => handleToggleItem(item.id, item.isCompleted)}
                           className={`mt-0.5 flex-shrink-0 w-6 h-6 rounded border flex items-center justify-center transition-colors touch-manipulation ${
-                            item.isCompleted ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 bg-white'
+                            item.isCompleted ? 'bg-green-500 border-green-500 text-white' : 'border-stone-300 bg-white'
                           }`}
                         >
                           {item.isCompleted ? <CheckCircle2 className="w-4 h-4" /> : null}
                         </button>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-medium text-sm ${item.isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          <p className={`font-medium text-sm ${item.isCompleted ? 'text-stone-500 line-through' : 'text-stone-900'}`}>
                             {item.taskName}
                           </p>
                           {item.description && (
-                            <p className="text-xs text-gray-500 truncate mt-0.5">{item.description}</p>
+                            <p className="text-xs text-stone-500 truncate mt-0.5">{item.description}</p>
                           )}
                         </div>
-                        <div className="text-sm font-medium text-gray-700 flex-shrink-0">
+                        <div className="text-sm font-medium text-stone-700 flex-shrink-0">
                           ${(item.estimatedPrice / 100).toFixed(2)}
                         </div>
                       </li>
                     ))}
 
                     {/* Add Item Form */}
-                    <li className="p-3 sm:p-4 bg-gray-50/50">
+                    <li className="p-3 sm:p-4 bg-stone-50/50">
                       {showAddItem ? (
                         <div className="flex flex-col gap-2">
                           <input
@@ -226,19 +227,19 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
                             placeholder="Task (e.g. Hem, Take in)"
                             value={newItemName}
                             onChange={(e) => setNewItemName(e.target.value)}
-                            className="w-full h-11 rounded-md border-gray-300 text-sm focus:ring-rose-500 focus:border-rose-500"
+                            className="w-full h-11 rounded-md border-stone-300 text-sm focus:ring-rose-500 focus:border-rose-500"
                           />
                           <div className="flex gap-2">
                             <div className="relative flex-1">
                               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <DollarSign className="h-4 w-4 text-gray-400" />
+                                <DollarSign className="h-4 w-4 text-stone-400" />
                               </div>
                               <input
                                 type="number"
                                 placeholder="Price"
                                 value={newItemPrice}
                                 onChange={(e) => setNewItemPrice(e.target.value)}
-                                className="w-full h-11 pl-9 rounded-md border-gray-300 text-sm focus:ring-rose-500 focus:border-rose-500"
+                                className="w-full h-11 pl-9 rounded-md border-stone-300 text-sm focus:ring-rose-500 focus:border-rose-500"
                               />
                             </div>
                             <button
@@ -249,7 +250,7 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
                             </button>
                             <button
                               onClick={() => setShowAddItem(false)}
-                              className="text-gray-500 hover:bg-gray-200 px-3 rounded-md h-11 touch-manipulation"
+                              className="text-stone-500 hover:bg-stone-200 px-3 rounded-md h-11 touch-manipulation"
                             >
                               Cancel
                             </button>
@@ -271,10 +272,10 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
 
               {/* Fittings */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg text-gray-900">Fittings</h3>
+                <h3 className="font-semibold text-lg text-stone-900">Fittings</h3>
                 {job.fittings && job.fittings.length > 0 ? (
                   <div className="space-y-2">
-                    {job.fittings.map((fitting: any) => (
+                    {job.fittings.map((fitting: Pick<import('@/lib/types').Appointment, 'id' | 'date' | 'status'>) => (
                       <div key={fitting.id} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
                         <div className="flex items-center gap-3">
                           <div className="bg-purple-100 p-2 rounded-md text-purple-700">
@@ -293,12 +294,12 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
                     ))}
                   </div>
                 ) : (
-                  <div className="p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center flex flex-col items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-gray-400" />
-                    <p className="text-sm text-gray-500">No fittings scheduled yet.</p>
+                  <div className="p-4 bg-stone-50 rounded-lg border border-dashed border-stone-300 text-center flex flex-col items-center gap-2">
+                    <AlertCircle className="w-5 h-5 text-stone-400" />
+                    <p className="text-sm text-stone-500">No fittings scheduled yet.</p>
                   </div>
                 )}
-                <button className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium h-13 sm:h-11 touch-manipulation">
+                <button className="w-full bg-white border border-stone-300 hover:bg-stone-50 text-stone-700 px-4 py-2 rounded-lg font-medium h-13 sm:h-11 touch-manipulation">
                   Schedule New Fitting
                 </button>
               </div>
@@ -308,13 +309,13 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
         </div>
 
         {/* Footer Actions */}
-        <div className="flex-shrink-0 p-4 sm:p-6 border-t border-gray-200 bg-white rounded-b-2xl flex flex-col sm:flex-row gap-3 justify-end items-center">
-          <div className="mr-auto text-sm text-gray-500 flex items-center gap-2">
-            Status: <span className="font-semibold text-gray-900 capitalize bg-gray-100 px-2 py-0.5 rounded-md">{job.status.replace('_', ' ')}</span>
+        <div className="flex-shrink-0 p-4 sm:p-6 border-t border-stone-200 bg-white rounded-b-2xl flex flex-col sm:flex-row gap-3 justify-end items-center">
+          <div className="mr-auto text-sm text-stone-500 flex items-center gap-2">
+            Status: <span className="font-semibold text-stone-900 capitalize bg-stone-100 px-2 py-0.5 rounded-md">{job.status.replace('_', ' ')}</span>
           </div>
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-6 py-2 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors h-13 sm:h-11 touch-manipulation"
+            className="w-full sm:w-auto px-6 py-2 rounded-lg font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 transition-colors h-13 sm:h-11 touch-manipulation"
           >
             Close
           </button>

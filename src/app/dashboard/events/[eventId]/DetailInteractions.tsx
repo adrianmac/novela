@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { toggleTaskStatus, addNote, markPaymentPaid } from './actions';
 import { cn } from '@/lib/utils';
 import { ChevronRight, CheckCircle2 } from 'lucide-react';
+import type { NoteDisplay, Task, Payment, Client } from '@/lib/types';
 
-export function DetailInteractions({ eventId, notesData, eventTasks, payments, client }: { eventId: string, notesData: any[], eventTasks: any[], payments: any[], client: any }) {
+export function DetailInteractions({ eventId, notesData, eventTasks, payments, client }: { eventId: string, notesData: NoteDisplay[], eventTasks: Task[], payments: Payment[], client: Pick<Client, 'phone' | 'email'> }) {
   const [noteText, setNoteText] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +50,7 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
       <section className="bg-white rounded-xl border border-rose-100 p-5 sm:p-6 shadow-sm flex flex-col h-[500px] w-full lg:w-2/3">
          <h2 className="font-serif font-bold text-xl text-[#1C1012] mb-6 flex-shrink-0">Staff Notes</h2>
          <div className="flex-1 overflow-y-auto pr-2 flex flex-col gap-6 mb-4">
-            {notesData.map((note: any) => (
+            {notesData.map((note: NoteDisplay) => (
               <div key={note.id} className="flex gap-3 sm:gap-4">
                 <div className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0",
@@ -60,9 +61,9 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
                 <div className="flex-1">
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="font-bold text-[#1C1012] text-sm">{note.author}</span>
-                    <span className="text-xs text-gray-400">{note.time}</span>
+                    <span className="text-xs text-stone-400">{note.time}</span>
                   </div>
-                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg rounded-tl-none border border-gray-100 leading-relaxed">
+                  <p className="text-sm text-stone-700 bg-stone-50 p-3 rounded-lg rounded-tl-none border border-stone-100 leading-relaxed">
                     {note.text}
                   </p>
                 </div>
@@ -79,10 +80,10 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
                 value={noteText}
                 onChange={e => setNoteText(e.target.value)}
                 placeholder="Add a note... (auto-assigns to Isabel M.)"
-                className="w-full border border-gray-300 rounded-lg p-3 text-sm min-h-[80px] sm:min-h-[60px] focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none font-sans"
+                className="w-full border border-stone-300 rounded-lg p-3 text-sm min-h-[80px] sm:min-h-[60px] focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none font-sans"
               ></textarea>
               <div className="flex justify-end">
-                <button onClick={handlePostNote} className="h-10 px-4 bg-gray-900 text-white rounded-md text-sm font-semibold hover:bg-gray-800 active:scale-[0.97] touch-manipulation">
+                <button onClick={handlePostNote} className="h-10 px-4 bg-stone-900 text-white rounded-md text-sm font-semibold hover:bg-stone-800 active:scale-[0.97] touch-manipulation">
                   Post Note
                 </button>
               </div>
@@ -98,7 +99,7 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
           </div>
 
           <div className="divide-y divide-rose-50">
-            {payments.map((p: any) => {
+            {payments.map((p: Payment) => {
               const isOverdue = p.status === 'overdue';
               const isPaid = p.status === 'paid';
               return (
@@ -136,24 +137,24 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
              <h3 className="font-bold text-[#1C1012] text-sm uppercase tracking-wider text-[#8B7355]">Open Tasks</h3>
            </div>
            <div className="p-2">
-             {eventTasks.map((t: any) => {
+             {eventTasks.map((t: Task) => {
                const checked = t.status === 'completed';
                const overdue = new Date(t.dueDate) < new Date() && !checked;
                return (
-                 <label key={t.id} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer touch-manipulation group">
+                 <label key={t.id} className="flex items-start gap-3 p-3 hover:bg-stone-50 rounded-lg cursor-pointer touch-manipulation group">
                    <div
                     onClick={() => handleTaskToggle(t.id, t.status)}
                     className={cn(
                      "w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
-                     checked ? "bg-gray-200 border-gray-300 text-gray-500" :
-                     overdue ? "border-red-400 bg-red-50" : "border-gray-300 bg-white group-hover:border-gray-400"
+                     checked ? "bg-stone-200 border-stone-300 text-stone-500" :
+                     overdue ? "border-red-400 bg-red-50" : "border-stone-300 bg-white group-hover:border-stone-400"
                    )}>
                      {checked && <CheckCircle2 className="w-4 h-4" />}
                    </div>
                    <div className="flex-1">
                      <p className={cn(
                        "text-sm font-medium leading-snug mb-1",
-                       checked ? "text-gray-400 line-through" :
+                       checked ? "text-stone-400 line-through" :
                        overdue ? "text-red-700" : "text-[#1C1012]"
                      )}>{t.title}</p>
                    </div>
@@ -166,10 +167,10 @@ export function DetailInteractions({ eventId, notesData, eventTasks, payments, c
         <div className="bg-white rounded-xl border border-rose-100 p-4 sm:p-5 shadow-sm touch-manipulation hover:shadow-md transition-shadow cursor-pointer group relative">
            <div className="flex justify-between items-center mb-3">
              <h3 className="font-bold text-[#1C1012] text-sm uppercase tracking-wider text-[#8B7355]">Client Info</h3>
-             <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#C9697A]" />
+             <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#C9697A]" />
            </div>
            <p className="font-semibold text-[#1C1012] text-sm mb-1">{client.phone}</p>
-           <p className="text-sm text-gray-600 truncate">{client.email}</p>
+           <p className="text-sm text-stone-600 truncate">{client.email}</p>
         </div>
 
       </aside>

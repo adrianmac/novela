@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Scissors, MessageSquare, Package, Plus, Clock, Users, User, X } from "lucide-react";
 import { addAppointment, getClientsAndEvents } from "./actions";
 import type { StaffMember } from "./shared";
+import type { ScheduleData, ScheduleAppointment } from '@/lib/types';
 
 type ViewType = "week" | "day";
 
-export default function ScheduleClient({ initialData }: { initialData: any }) {
+export default function ScheduleClient({ initialData }: { initialData: ScheduleData }) {
   const [view, setView] = useState<ViewType>("week");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedStaff, setSelectedStaff] = useState<string>("all");
@@ -15,7 +16,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCell, setSelectedCell] = useState<{ staffId: string, date: Date } | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<ScheduleAppointment | null>(null);
 
   const startOfWeek = new Date(currentDate);
   const day = startOfWeek.getDay();
@@ -51,7 +52,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
   };
 
   const getAppointmentsForCell = (staffId: string, dayDate: Date) => {
-    return appointments.filter((apt: any) => {
+    return appointments.filter((apt: ScheduleAppointment) => {
       const aptDate = new Date(apt.date);
       return apt.staffId === staffId &&
              aptDate.getDate() === dayDate.getDate() &&
@@ -199,7 +200,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
 
                            {/* Appointments */}
                            <div className="space-y-1.5 max-h-full overflow-y-auto no-scrollbar">
-                             {cellApts.map((apt: any) => (
+                             {cellApts.map((apt: ScheduleAppointment) => (
                                <div
                                  key={apt.id}
                                  onClick={() => setSelectedAppointment(apt)}
@@ -246,7 +247,7 @@ export default function ScheduleClient({ initialData }: { initialData: any }) {
                          <div key={i} className="absolute w-full border-b border-stone-100" style={{ top: `${i * 64}px`, height: '64px' }} />
                       ))}
                       {/* Exact positioning of appointments */}
-                      {getAppointmentsForCell(staff.id, currentDate).map((apt: any) => {
+                      {getAppointmentsForCell(staff.id, currentDate).map((apt: ScheduleAppointment) => {
                          const d = new Date(apt.date);
                          // Convert time to pixels: (hours from 9 AM) * 64 + (minutes / 60) * 64
                          const startHour = d.getHours();
@@ -334,7 +335,7 @@ function AddAppointmentModal({ staffId, date, staffList, onClose }: { staffId: s
   const [type, setType] = useState("consultation");
   const [clientId, setClientId] = useState("");
   const [eventId, setEventId] = useState("");
-  const [data, setData] = useState<{clients: any[], events: any[]}>({ clients: [], events: [] });
+  const [data, setData] = useState<{clients: Array<{id: string; firstName: string; lastName: string}>, events: Array<{id: string; clientId: string; type: string; date: string}>}>({ clients: [], events: [] });
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -455,7 +456,7 @@ function AddAppointmentModal({ staffId, date, staffList, onClose }: { staffId: s
 // I need to patch the file instead
 
 
-function AppointmentDetailModal({ appointment, onClose }: { appointment: any, onClose: () => void }) {
+function AppointmentDetailModal({ appointment, onClose }: { appointment: ScheduleAppointment, onClose: () => void }) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handleEscape);

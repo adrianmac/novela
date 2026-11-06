@@ -6,11 +6,12 @@ import { submitIntakeForm } from './actions';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Check, Calendar, Users, MapPin, Search } from 'lucide-react';
+import type { StaffMember } from '@/lib/types';
 
 const steps = ['Basic information', 'Event details', 'Schedule consultation'];
 const servicesList = ['Dress rental', 'Alterations / Seamstress', 'Event planning', 'Decoration'];
 
-export default function IntakeForm({ availableStaff }: { availableStaff: any[] }) {
+export default function IntakeForm({ availableStaff }: { availableStaff: StaffMember[] }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -27,14 +28,14 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
   const handleNext = () => {
     // Basic validation per step
     if (step === 1) {
-      const newErrors: any = {};
+      const newErrors: Record<string, string> = {};
       if (!formData.firstName) newErrors.firstName = 'First name required';
       if (!formData.lastName) newErrors.lastName = 'Last name required';
       if (!formData.phone || formData.phone.length < 10) newErrors.phone = 'Valid phone required';
       if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
     }
     if (step === 2) {
-      const newErrors: any = {};
+      const newErrors: Record<string, string> = {};
       if (!formData.eventType) newErrors.eventType = 'Event type required';
       if (!formData.eventDate) newErrors.eventDate = 'Event date required';
       if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
@@ -103,13 +104,13 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
                     "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-colors",
                     isCompleted ? "bg-emerald-500 text-white shadow-sm" :
                     isActive ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-600/20 ring-offset-2" :
-                    "bg-gray-100 text-gray-400"
+                    "bg-stone-100 text-stone-400"
                   )}>
                     {isCompleted ? <Check className="w-5 h-5" /> : stepNum}
                   </div>
                   <span className={cn(
                     "hidden sm:inline font-semibold",
-                    isActive ? "text-rose-950" : "text-gray-400"
+                    isActive ? "text-rose-950" : "text-stone-400"
                   )}>{label}</span>
                 </div>
                 {idx < steps.length - 1 && <div className="flex-1 h-px bg-rose-200 mx-2 hidden sm:block"></div>}
@@ -210,7 +211,7 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
                     "h-16 rounded-xl border-2 font-bold uppercase tracking-widest text-sm transition-all shadow-sm touch-manipulation",
                     formData.eventType === type
                       ? "bg-rose-50 border-rose-500 text-rose-900 ring-4 ring-rose-500/10"
-                      : "bg-white border-gray-200 text-gray-500 hover:border-rose-200 hover:bg-rose-50/30"
+                      : "bg-white border-stone-200 text-stone-500 hover:border-rose-200 hover:bg-rose-50/30"
                   )}>
                     {type === 'wedding' ? 'WEDDING' : 'QUINCEAÑERA'}
                   </button>
@@ -249,7 +250,7 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="relative">
                   <label className="block text-xs font-semibold text-rose-700 mb-1">Venue Name</label>
-                  <div className="absolute left-3 top-8 text-gray-400">
+                  <div className="absolute left-3 top-8 text-stone-400">
                     <Search className="w-4 h-4" />
                   </div>
                   <input type="text" value={formData.venueName} onChange={e => setFormData({...formData, venueName: e.target.value})}
@@ -267,9 +268,9 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
               <label className="block text-sm font-bold text-rose-900 mb-3">Services interested in</label>
               <div className="grid sm:grid-cols-2 gap-3">
                 {servicesList.map(svc => (
-                  <label key={svc} className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:bg-rose-50 cursor-pointer touch-manipulation shadow-sm transition-colors group has-[:checked]:border-rose-400 has-[:checked]:bg-rose-50">
+                  <label key={svc} className="flex items-center gap-3 p-4 border border-stone-200 rounded-xl hover:bg-rose-50 cursor-pointer touch-manipulation shadow-sm transition-colors group has-[:checked]:border-rose-400 has-[:checked]:bg-rose-50">
                     <input type="checkbox" checked={formData.services.includes(svc)} onChange={() => toggleService(svc)}
-                      className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500 focus:ring-offset-2 transition-colors cursor-pointer" />
+                      className="w-5 h-5 rounded border-stone-300 text-rose-600 focus:ring-rose-500 focus:ring-offset-2 transition-colors cursor-pointer" />
                     <span className="font-semibold text-rose-950 group-has-[:checked]:text-rose-900">{svc}</span>
                   </label>
                 ))}
@@ -362,15 +363,15 @@ export default function IntakeForm({ availableStaff }: { availableStaff: any[] }
       </div>
 
       {/* FOOTER ACTIONS */}
-      <div className="bg-gray-50 border-t border-gray-200 p-6 flex items-center justify-between gap-4">
+      <div className="bg-stone-50 border-t border-stone-200 p-6 flex items-center justify-between gap-4">
         {step > 1 ? (
-          <button onClick={handleBack} className="h-13 px-6 rounded-xl font-bold text-gray-500 hover:bg-gray-200 hover:text-gray-800 transition-colors touch-manipulation uppercase tracking-wider text-sm shadow-sm border border-transparent hover:border-gray-300">
+          <button onClick={handleBack} className="h-13 px-6 rounded-xl font-bold text-stone-500 hover:bg-stone-200 hover:text-stone-800 transition-colors touch-manipulation uppercase tracking-wider text-sm shadow-sm border border-transparent hover:border-stone-300">
             ← Back
           </button>
         ) : <div></div>}
 
         {step < 3 ? (
-          <button onClick={handleNext} className="h-13 px-8 rounded-xl bg-gray-900 text-white font-bold hover:bg-black transition-colors touch-manipulation shadow-md hover:shadow-lg active:scale-[0.98] uppercase tracking-wider text-sm flex items-center gap-2">
+          <button onClick={handleNext} className="h-13 px-8 rounded-xl bg-stone-900 text-white font-bold hover:bg-black transition-colors touch-manipulation shadow-md hover:shadow-lg active:scale-[0.98] uppercase tracking-wider text-sm flex items-center gap-2">
             Next: {step === 1 ? 'Event Details' : 'Schedule Consultation'} →
           </button>
         ) : (

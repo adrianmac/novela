@@ -95,20 +95,20 @@ export default function CalendarClient({
           <div className="text-xs text-[#8B7355] font-medium mb-1">Dashboard › <span className="text-[#C9697A]">Events</span></div>
           <h1 className="font-serif font-bold text-2xl text-[#1C1012] leading-tight flex items-baseline gap-3">
             Events calendar
-            <span className="text-sm font-sans font-normal text-gray-500 hidden sm:inline-block">14 active events · 8 weddings · 6 quinceañeras</span>
+            <span className="text-sm font-sans font-normal text-stone-500 hidden sm:inline-block">14 active events · 8 weddings · 6 quinceañeras</span>
           </h1>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
-          <div className="flex bg-gray-100 p-1 rounded-lg">
+          <div className="flex bg-stone-100 p-1 rounded-lg">
             <button
               onClick={() => setView('month')}
-              className={cn("px-3 h-10 rounded-md text-sm font-medium touch-manipulation transition-colors", view === 'month' ? "bg-white text-[#1C1012] shadow-sm" : "text-gray-500 hover:text-[#1C1012]")}
+              className={cn("px-3 h-10 rounded-md text-sm font-medium touch-manipulation transition-colors", view === 'month' ? "bg-white text-[#1C1012] shadow-sm" : "text-stone-500 hover:text-[#1C1012]")}
             >
               Month
             </button>
             <button
               onClick={() => setView('list')}
-              className={cn("px-3 h-10 rounded-md text-sm font-medium touch-manipulation transition-colors", view === 'list' ? "bg-white text-[#1C1012] shadow-sm" : "text-gray-500 hover:text-[#1C1012]")}
+              className={cn("px-3 h-10 rounded-md text-sm font-medium touch-manipulation transition-colors", view === 'list' ? "bg-white text-[#1C1012] shadow-sm" : "text-stone-500 hover:text-[#1C1012]")}
             >
               List
             </button>
@@ -126,7 +126,7 @@ export default function CalendarClient({
           {['all', 'weddings', 'quinces'].map(t => (
             <button key={t} onClick={() => setFilterType(t as 'all'|'weddings'|'quinces')} className={cn(
               "h-10 px-3 rounded-full text-sm font-semibold touch-manipulation transition-colors border",
-              filterType === t ? "bg-[#1C1012] text-white border-[#1C1012]" : "bg-white text-gray-600 border-gray-200 hover:border-[#C9697A]"
+              filterType === t ? "bg-[#1C1012] text-white border-[#1C1012]" : "bg-white text-stone-600 border-stone-200 hover:border-[#C9697A]"
             )}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
@@ -135,23 +135,23 @@ export default function CalendarClient({
           <span className="text-xs font-bold text-[#8B7355] uppercase tracking-wider mr-2 hidden sm:block">Services:</span>
           <button onClick={() => setFilterService(filterService === 'planning' ? 'all' : 'planning')} className={cn(
             "h-10 px-3 rounded-full text-sm font-semibold touch-manipulation transition-colors border",
-            filterService === 'planning' ? "bg-blue-100 text-blue-800 border-blue-200" : "bg-white text-gray-600 border-gray-200 hover:border-blue-200"
+            filterService === 'planning' ? "bg-blue-100 text-blue-800 border-blue-200" : "bg-white text-stone-600 border-stone-200 hover:border-blue-200"
           )}>Event planning</button>
           <button onClick={() => setFilterService(filterService === 'dress_rental' ? 'all' : 'dress_rental')} className={cn(
             "h-10 px-3 rounded-full text-sm font-semibold touch-manipulation transition-colors border",
-            filterService === 'dress_rental' ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-white text-gray-600 border-gray-200 hover:border-amber-200"
+            filterService === 'dress_rental' ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-white text-stone-600 border-stone-200 hover:border-amber-200"
           )}>Dress rental</button>
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={prevMonth} className="h-10 w-10 flex items-center justify-center rounded-md border border-gray-200 bg-white hover:bg-gray-50 active:scale-[0.97] touch-manipulation">
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          <button onClick={prevMonth} className="h-10 w-10 flex items-center justify-center rounded-md border border-stone-200 bg-white hover:bg-stone-50 active:scale-[0.97] touch-manipulation">
+            <ChevronLeft className="w-5 h-5 text-stone-600" />
           </button>
           <span className="font-serif font-bold text-[#1C1012] min-w-[120px] text-center">
             {format(currentDate, 'MMMM yyyy')}
           </span>
-          <button onClick={nextMonth} className="h-10 w-10 flex items-center justify-center rounded-md border border-gray-200 bg-white hover:bg-gray-50 active:scale-[0.97] touch-manipulation">
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+          <button onClick={nextMonth} className="h-10 w-10 flex items-center justify-center rounded-md border border-stone-200 bg-white hover:bg-stone-50 active:scale-[0.97] touch-manipulation">
+            <ChevronRight className="w-5 h-5 text-stone-600" />
           </button>
         </div>
       </div>
@@ -162,9 +162,9 @@ export default function CalendarClient({
         {/* Calendar Grid */}
         <div className="flex-1 flex flex-col overflow-y-auto">
           {/* Days of week header */}
-          <div className="grid grid-cols-7 border-b border-rose-100 flex-shrink-0 bg-gray-50">
+          <div className="grid grid-cols-7 border-b border-rose-100 flex-shrink-0 bg-stone-50">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-              <div key={d} className="py-2 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{d}</div>
+              <div key={d} className="py-2 text-center text-xs font-bold text-stone-500 uppercase tracking-wider">{d}</div>
             ))}
           </div>
 
@@ -185,7 +185,7 @@ export default function CalendarClient({
                   onClick={() => handleDayClick(d)}
                   className={cn(
                     "min-h-[80px] border-r border-b border-rose-100 p-1 sm:p-2 cursor-pointer hover:bg-rose-50 transition-colors touch-manipulation group relative",
-                    !isSameMonth(d, monthStart) && "bg-gray-50/50",
+                    !isSameMonth(d, monthStart) && "bg-stone-50/50",
                     isToday && "ring-2 ring-inset ring-blue-500",
                     isSelected && !isToday && "bg-rose-50 ring-1 ring-inset ring-[#C9697A]"
                   )}
@@ -193,8 +193,8 @@ export default function CalendarClient({
                   <div className="flex justify-between items-start mb-1">
                     <span className={cn(
                       "text-xs sm:text-sm font-semibold w-6 h-6 flex items-center justify-center rounded-full",
-                      isToday ? "bg-blue-500 text-white" : "text-gray-700",
-                      !isSameMonth(d, monthStart) && !isToday && "text-gray-400"
+                      isToday ? "bg-blue-500 text-white" : "text-stone-700",
+                      !isSameMonth(d, monthStart) && !isToday && "text-stone-400"
                     )}>
                       {format(d, 'd')}
                     </span>
@@ -210,7 +210,7 @@ export default function CalendarClient({
                       </div>
                     ))}
                     {displayApts.map(a => {
-                      let color = "bg-gray-100 text-gray-800";
+                      let color = "bg-stone-100 text-stone-800";
                       if(a.type === 'fitting') color = "bg-emerald-100 text-emerald-800";
                       if(a.type === 'decoration') color = "bg-amber-100 text-amber-800";
                       if(a.type === 'consultation') color = "bg-blue-100 text-blue-800";
@@ -223,7 +223,7 @@ export default function CalendarClient({
                       );
                     })}
                     {hiddenCount > 0 && (
-                      <div className="text-[10px] sm:text-xs font-bold text-gray-500 px-1 hover:underline">
+                      <div className="text-[10px] sm:text-xs font-bold text-stone-500 px-1 hover:underline">
                         +{hiddenCount} more
                       </div>
                     )}
@@ -239,11 +239,11 @@ export default function CalendarClient({
           <div className="flex border-b border-rose-100">
             <button onClick={() => setSidebarTab('upcoming')} className={cn(
               "flex-1 h-14 text-sm font-bold uppercase tracking-wider touch-manipulation transition-colors",
-              sidebarTab === 'upcoming' ? "text-[#1C1012] border-b-2 border-[#C9697A] bg-white" : "text-gray-500 hover:text-[#1C1012] bg-[#F8F4F0]"
+              sidebarTab === 'upcoming' ? "text-[#1C1012] border-b-2 border-[#C9697A] bg-white" : "text-stone-500 hover:text-[#1C1012] bg-[#F8F4F0]"
             )}>Upcoming</button>
             <button onClick={() => setSidebarTab('selected')} className={cn(
               "flex-1 h-14 text-sm font-bold uppercase tracking-wider touch-manipulation transition-colors",
-              sidebarTab === 'selected' ? "text-[#1C1012] border-b-2 border-[#C9697A] bg-white" : "text-gray-500 hover:text-[#1C1012] bg-[#F8F4F0]"
+              sidebarTab === 'selected' ? "text-[#1C1012] border-b-2 border-[#C9697A] bg-white" : "text-stone-500 hover:text-[#1C1012] bg-[#F8F4F0]"
             )}>Selected</button>
           </div>
 
@@ -259,8 +259,8 @@ export default function CalendarClient({
             {/* List to render */}
             {(sidebarTab === 'upcoming' ? upcomingEvents : selectedDayItems.evts).length === 0 && sidebarTab === 'selected' && selectedDayItems.apts.length === 0 ? (
                <div className="text-center py-10">
-                 <CalendarIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                 <p className="text-gray-500 font-medium">No events this day</p>
+                 <CalendarIcon className="w-10 h-10 text-stone-300 mx-auto mb-3" />
+                 <p className="text-stone-500 font-medium">No events this day</p>
                </div>
             ) : null}
 
@@ -275,7 +275,7 @@ export default function CalendarClient({
                       "text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wider uppercase",
                       e.type === 'wedding' ? "bg-rose-50 text-rose-700" : "bg-purple-50 text-purple-700"
                     )}>{e.type}</span>
-                    <span className="text-xs text-gray-500 font-mono">{e.date} • {e.time}</span>
+                    <span className="text-xs text-stone-500 font-mono">{e.date} • {e.time}</span>
                   </div>
                   <span className={cn(
                     "text-[10px] font-bold px-2 py-0.5 rounded-full",
@@ -284,9 +284,9 @@ export default function CalendarClient({
                   )}>{e.countdown}d</span>
                 </div>
                 <h4 className="font-serif font-bold text-[#1C1012] text-lg leading-tight mb-1">{e.title}</h4>
-                <p className="text-sm text-gray-500 mb-3">{e.venue}</p>
+                <p className="text-sm text-stone-500 mb-3">{e.venue}</p>
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {e.services.map(s => <span key={s} className="bg-gray-100 text-gray-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">{s.replace('_', ' ')}</span>)}
+                  {e.services.map(s => <span key={s} className="bg-stone-100 text-stone-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">{s.replace('_', ' ')}</span>)}
                 </div>
                 <div className="flex items-center justify-between pt-3 border-t border-rose-50">
                    <span className="font-mono font-bold text-sm text-[#1C1012]">${e.totalValue}</span>
@@ -300,8 +300,8 @@ export default function CalendarClient({
             ))}
 
             {sidebarTab === 'selected' && selectedDayItems.apts.map(a => {
-                let color = "border-l-gray-400 bg-gray-50";
-                let badge = "bg-gray-200 text-gray-700";
+                let color = "border-l-stone-400 bg-stone-50";
+                let badge = "bg-stone-200 text-stone-700";
                 if(a.type === 'fitting') { color = "border-l-emerald-400"; badge = "bg-emerald-100 text-emerald-800"; }
                 if(a.type === 'decoration') { color = "border-l-amber-400"; badge = "bg-amber-100 text-amber-800"; }
                 if(a.type === 'consultation') { color = "border-l-blue-400"; badge = "bg-blue-100 text-blue-800"; }
@@ -311,7 +311,7 @@ export default function CalendarClient({
                   <div key={a.id} className={cn("bg-white rounded-lg p-3 border-l-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98] touch-manipulation", color)}>
                      <div className="flex justify-between items-start mb-1">
                         <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wider uppercase", badge)}>{a.type}</span>
-                        <span className="text-xs text-gray-500 font-mono">{a.time}</span>
+                        <span className="text-xs text-stone-500 font-mono">{a.time}</span>
                      </div>
                      <h4 className="font-semibold text-[#1C1012] text-sm mt-1">{a.title}</h4>
                   </div>
@@ -323,7 +323,7 @@ export default function CalendarClient({
       </div>
 
       {/* Legend Bottom Bar */}
-      <div className="px-4 sm:px-6 py-2 border-t border-rose-100 bg-[#FDF5F6] flex-shrink-0 flex flex-wrap items-center gap-3 sm:gap-6 text-xs font-medium text-gray-600">
+      <div className="px-4 sm:px-6 py-2 border-t border-rose-100 bg-[#FDF5F6] flex-shrink-0 flex flex-wrap items-center gap-3 sm:gap-6 text-xs font-medium text-stone-600">
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-rose-200"></div> Wedding</div>
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-purple-200"></div> Quinceañera</div>
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-emerald-200"></div> Fitting</div>

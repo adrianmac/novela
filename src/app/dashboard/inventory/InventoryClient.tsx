@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Search, Filter, Plus, Image as ImageIcon, CheckCircle2, AlertTriangle, Clock, RotateCcw } from 'lucide-react';
 import { addInventoryItem, reserveItem, markItemStatus, logReturn, searchEvents, checkDressAvailability } from './actions';
+import type { InventoryItemWithRental, AvailabilityResult, EventSearchResult, InventoryItem } from '@/lib/types';
 
-export default function InventoryClient({ initialItems }: { initialItems: any[] }) {
+export default function InventoryClient({ initialItems }: { initialItems: InventoryItemWithRental[] }) {
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [tab, setTab] = useState('All');
@@ -20,23 +21,23 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
   const [isAdding, setIsAdding] = useState(false);
 
   // Reserve State
-  const [reserveModalOpen, setReserveModalOpen] = useState<{item: any} | null>(null);
+  const [reserveModalOpen, setReserveModalOpen] = useState<{item: InventoryItemWithRental} | null>(null);
   const [eventSearch, setEventSearch] = useState('');
-  const [eventResults, setEventResults] = useState<any[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [eventResults, setEventResults] = useState<EventSearchResult[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventSearchResult | null>(null);
   const [reserveDates, setReserveDates] = useState({ pickup: '', return: '' });
   const [isReserving, setIsReserving] = useState(false);
   const [reserveError, setReserveError] = useState('');
-  const [availabilityCheck, setAvailabilityCheck] = useState<any>(null);
+  const [availabilityCheck, setAvailabilityCheck] = useState<AvailabilityResult | null>(null);
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
   // Return State
-  const [returnModalOpen, setReturnModalOpen] = useState<{item: any} | null>(null);
+  const [returnModalOpen, setReturnModalOpen] = useState<{item: InventoryItemWithRental} | null>(null);
   const [returnData, setReturnData] = useState({ condition: 'Excellent', notes: '', cleaning: true });
   const [isReturning, setIsReturning] = useState(false);
 
   // Detail
-  const [detailModalOpen, setDetailModalOpen] = useState<{item: any} | null>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState<{item: InventoryItemWithRental} | null>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -114,7 +115,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
     }
   };
 
-  const selectEventForReservation = (evt: any) => {
+  const selectEventForReservation = (evt: EventSearchResult) => {
     setSelectedEvent(evt);
     // Auto populate dates (pickup = event - 1 day, return = event + 2 days)
     const eDate = new Date(evt.date);
@@ -236,7 +237,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
               <p className="text-sm text-rose-700/80 mb-3 line-clamp-2 min-h-[40px]">{item.description}</p>
 
               <div className="flex items-center gap-2 mb-4">
-                <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-bold font-mono">Size {item.size}</span>
+                <span className="bg-stone-100 text-stone-600 px-2 py-0.5 rounded text-xs font-bold font-mono">Size {item.size}</span>
                 <span className="bg-rose-50 text-rose-600 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border border-rose-100">{item.category}</span>
               </div>
 
@@ -275,7 +276,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
               {/* Actions */}
               <div className="mt-auto pt-2 grid gap-2 grid-cols-1">
                 {item.status === 'available' && (
-                  <button onClick={() => setReserveModalOpen({item})} className="h-13 sm:h-11 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors shadow-sm">
+                  <button onClick={() => setReserveModalOpen({item})} className="h-13 sm:h-11 bg-stone-900 hover:bg-stone-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors shadow-sm">
                     Reserve for event
                   </button>
                 )}
@@ -368,7 +369,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-rose-50">
-                <button onClick={() => setAddModalOpen(false)} disabled={isAdding} className="h-13 sm:h-11 px-6 text-gray-500 font-bold hover:bg-gray-100 rounded-xl touch-manipulation w-full sm:w-auto">Cancel</button>
+                <button onClick={() => setAddModalOpen(false)} disabled={isAdding} className="h-13 sm:h-11 px-6 text-stone-500 font-bold hover:bg-stone-100 rounded-xl touch-manipulation w-full sm:w-auto">Cancel</button>
                 <button onClick={handleAddItem} disabled={isAdding || !addData.sku || !addData.name} className="h-13 sm:h-11 px-8 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 shadow-sm touch-manipulation disabled:opacity-50 w-full sm:w-auto">
                   {isAdding ? 'Saving...' : 'Save Item'}
                 </button>
@@ -383,12 +384,12 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
         <div className="fixed inset-0 bg-rose-950/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 sm:p-8 relative">
             <h2 className="text-xl font-serif font-bold text-rose-950 mb-4 border-b border-rose-100 pb-2">Reserve {reserveModalOpen.item.sku}</h2>
-            <p className="text-sm text-gray-600 mb-4 font-semibold">{reserveModalOpen.item.name}</p>
+            <p className="text-sm text-stone-600 mb-4 font-semibold">{reserveModalOpen.item.name}</p>
 
             {!selectedEvent ? (
               <>
                 <div className="relative mb-4">
-                  <Search className="w-4 h-4 absolute left-4 top-4 text-gray-400" />
+                  <Search className="w-4 h-4 absolute left-4 top-4 text-stone-400" />
                   <input
                     type="text"
                     placeholder="Search events by client name..."
@@ -407,7 +408,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-gray-50 rounded-xl border border-gray-100 p-4 text-center text-sm text-gray-500 mb-6 min-h-[100px] flex items-center justify-center font-semibold">
+                  <div className="bg-stone-50 rounded-xl border border-stone-100 p-4 text-center text-sm text-stone-500 mb-6 min-h-[100px] flex items-center justify-center font-semibold">
                     {eventSearch.length > 2 ? 'No events found.' : 'Search to select an event...'}
                   </div>
                 )}
@@ -451,7 +452,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                           <AlertTriangle className="w-5 h-5 text-red-600" />
                           Unavailable
                         </div>
-                        {availabilityCheck.conflicts.map((c: any, i: number) => (
+                        {availabilityCheck.conflicts.map((c: AvailabilityResult['conflicts'][number], i: number) => (
                           <div key={i} className="mb-3 font-medium text-red-700/80">
                             This dress is already reserved from {new Date(c.pickupDate).toLocaleDateString()} to {new Date(c.returnDate).toLocaleDateString()} for {c.clientName}.
                           </div>
@@ -461,11 +462,11 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                           <div className="mt-4 pt-4 border-t border-red-200/50">
                             <div className="font-bold mb-2 text-red-900">Suggested alternatives:</div>
                             <div className="space-y-2">
-                              {availabilityCheck.alternatives.map((alt: any) => (
+                              {availabilityCheck.alternatives.map((alt: InventoryItem) => (
                                 <div key={alt.id} className="flex justify-between items-center bg-white p-2 rounded border border-red-100 shadow-sm">
                                   <div>
-                                    <div className="font-bold text-gray-900 text-xs">{alt.sku} - {alt.name}</div>
-                                    <div className="text-[10px] text-gray-500">{alt.size} • {alt.category}</div>
+                                    <div className="font-bold text-stone-900 text-xs">{alt.sku} - {alt.name}</div>
+                                    <div className="text-[10px] text-stone-500">{alt.size} • {alt.category}</div>
                                   </div>
                                   <button onClick={() => {
                                       setReserveModalOpen({item: alt});
@@ -488,9 +489,9 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
             )}
 
             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-rose-50">
-              <button onClick={() => {setReserveModalOpen(null); setSelectedEvent(null); setEventSearch(''); setReserveError(''); setAvailabilityCheck(null);}} className="h-13 sm:h-11 px-4 text-gray-500 font-bold hover:bg-gray-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
+              <button onClick={() => {setReserveModalOpen(null); setSelectedEvent(null); setEventSearch(''); setReserveError(''); setAvailabilityCheck(null);}} className="h-13 sm:h-11 px-4 text-stone-500 font-bold hover:bg-stone-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
               {selectedEvent && (
-                <button onClick={handleReserve} disabled={isReserving || isCheckingAvailability || (availabilityCheck && !availabilityCheck.available)} className="h-13 sm:h-11 px-6 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
+                <button onClick={handleReserve} disabled={isReserving || isCheckingAvailability || (availabilityCheck && !availabilityCheck.available)} className="h-13 sm:h-11 px-6 bg-stone-900 text-white font-bold rounded-xl hover:bg-stone-800 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
                   {isReserving ? 'Reserving...' : 'Confirm Reservation'}
                 </button>
               )}
@@ -523,12 +524,12 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
               )}
 
               <label className="flex items-center gap-3 p-4 border border-rose-200 rounded-xl bg-rose-50/50 cursor-pointer touch-manipulation mt-2">
-                <input type="checkbox" checked={returnData.cleaning} onChange={e => setReturnData({...returnData, cleaning: e.target.checked})} className="w-6 h-6 rounded border-gray-300 text-rose-600 focus:ring-rose-500" />
+                <input type="checkbox" checked={returnData.cleaning} onChange={e => setReturnData({...returnData, cleaning: e.target.checked})} className="w-6 h-6 rounded border-stone-300 text-rose-600 focus:ring-rose-500" />
                 <span className="font-bold text-rose-900">Send to Cleaning</span>
               </label>
 
               <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-rose-50">
-                <button onClick={() => setReturnModalOpen(null)} disabled={isReturning} className="h-13 sm:h-11 px-6 text-gray-500 font-bold hover:bg-gray-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
+                <button onClick={() => setReturnModalOpen(null)} disabled={isReturning} className="h-13 sm:h-11 px-6 text-stone-500 font-bold hover:bg-stone-100 rounded-xl w-full sm:w-auto touch-manipulation">Cancel</button>
                 <button onClick={handleReturn} disabled={isReturning || (returnData.condition === 'Damage Noted' && !returnData.notes)} className="h-13 sm:h-11 px-8 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 shadow-sm disabled:opacity-50 w-full sm:w-auto touch-manipulation">
                   {isReturning ? 'Saving...' : 'Confirm Return'}
                 </button>
@@ -544,18 +545,18 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-rose-100 bg-rose-50 flex justify-between items-center">
               <h2 className="text-2xl font-serif font-bold text-rose-950">{detailModalOpen.item.name}</h2>
-              <button onClick={() => setDetailModalOpen(null)} aria-label="Close" className="h-10 w-10 sm:h-8 sm:w-8 bg-white rounded-full flex items-center justify-center font-bold text-gray-500 shadow-sm border border-rose-200 touch-manipulation hover:bg-rose-100">✕</button>
+              <button onClick={() => setDetailModalOpen(null)} aria-label="Close" className="h-10 w-10 sm:h-8 sm:w-8 bg-white rounded-full flex items-center justify-center font-bold text-stone-500 shadow-sm border border-rose-200 touch-manipulation hover:bg-rose-100">✕</button>
             </div>
             <div className="p-6 overflow-y-auto">
               <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-6">
-                <div><div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">SKU</div><div className="font-mono font-bold text-lg text-rose-950">{detailModalOpen.item.sku}</div></div>
-                <div><div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Status</div><div className={cn("font-bold text-lg uppercase", detailModalOpen.item.status === 'available' ? 'text-emerald-600' : 'text-amber-600')}>{detailModalOpen.item.status}</div></div>
-                <div><div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Size</div><div className="font-bold text-rose-950">{detailModalOpen.item.size || 'N/A'}</div></div>
-                <div><div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Category</div><div className="font-bold uppercase text-rose-950">{detailModalOpen.item.category}</div></div>
+                <div><div className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-1">SKU</div><div className="font-mono font-bold text-lg text-rose-950">{detailModalOpen.item.sku}</div></div>
+                <div><div className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-1">Status</div><div className={cn("font-bold text-lg uppercase", detailModalOpen.item.status === 'available' ? 'text-emerald-600' : 'text-amber-600')}>{detailModalOpen.item.status}</div></div>
+                <div><div className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-1">Size</div><div className="font-bold text-rose-950">{detailModalOpen.item.size || 'N/A'}</div></div>
+                <div><div className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-1">Category</div><div className="font-bold uppercase text-rose-950">{detailModalOpen.item.category}</div></div>
               </div>
               <div className="border-t border-rose-100 pt-6">
                 <h3 className="font-bold text-rose-900 mb-2">Description</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">{detailModalOpen.item.description || 'No description provided.'}</p>
+                <p className="text-sm text-stone-700 leading-relaxed">{detailModalOpen.item.description || 'No description provided.'}</p>
               </div>
               {detailModalOpen.item.lastCleanedDate && (
                 <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm font-semibold text-blue-900 flex gap-2 items-center">
@@ -564,8 +565,8 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                 </div>
               )}
             </div>
-            <div className="p-6 border-t border-rose-100 bg-gray-50">
-              <button onClick={() => setDetailModalOpen(null)} className="w-full h-13 sm:h-11 bg-white border border-gray-300 text-gray-700 font-bold rounded-xl touch-manipulation hover:bg-gray-100">
+            <div className="p-6 border-t border-rose-100 bg-stone-50">
+              <button onClick={() => setDetailModalOpen(null)} className="w-full h-13 sm:h-11 bg-white border border-stone-300 text-stone-700 font-bold rounded-xl touch-manipulation hover:bg-stone-100">
                 Close
               </button>
             </div>

@@ -1,8 +1,9 @@
 import { CalendarClock, CalendarDays, CircleUserRound } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
+import type { AlterationJobWithRelations, AlterationItem } from '@/lib/types';
 
 interface JobCardProps {
-  job: any;
+  job: AlterationJobWithRelations;
   onClick: () => void;
 }
 
@@ -20,10 +21,10 @@ export default function JobCard({ job, onClick }: JobCardProps) {
   return (
     <div
       onClick={onClick}
-      className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer text-left w-full touch-manipulation h-auto min-h-[140px]"
+      className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer text-left w-full touch-manipulation h-auto min-h-[140px]"
     >
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-gray-900 truncate pr-2">
+        <h3 className="font-semibold text-stone-900 truncate pr-2">
           {job.client.firstName} {job.client.lastName}
         </h3>
         <span className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${badgeColor}`}>
@@ -31,18 +32,18 @@ export default function JobCard({ job, onClick }: JobCardProps) {
         </span>
       </div>
 
-      <div className="flex items-center text-xs text-gray-500 mb-3 gap-1">
+      <div className="flex items-center text-xs text-stone-500 mb-3 gap-1">
         <CalendarDays className="w-3.5 h-3.5" />
         <span>{format(eventDate, 'MMM d, yyyy')}</span>
       </div>
 
-      <p className="text-sm text-gray-700 mb-3 line-clamp-2 leading-relaxed">
+      <p className="text-sm text-stone-700 mb-3 line-clamp-2 leading-relaxed">
         {job.garmentDescription}
       </p>
 
       {job.items && job.items.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
-          {job.items.slice(0, 3).map((item: any) => (
+          {job.items.slice(0, 3).map((item: AlterationItem) => (
             <span
               key={item.id}
               className="text-[10px] font-medium px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md border border-rose-100 uppercase tracking-wider"
@@ -51,16 +52,16 @@ export default function JobCard({ job, onClick }: JobCardProps) {
             </span>
           ))}
           {job.items.length > 3 && (
-            <span className="text-[10px] font-medium px-2 py-0.5 bg-gray-50 text-gray-600 rounded-md border border-gray-200 uppercase tracking-wider">
+            <span className="text-[10px] font-medium px-2 py-0.5 bg-stone-50 text-stone-600 rounded-md border border-stone-200 uppercase tracking-wider">
               +{job.items.length - 3}
             </span>
           )}
         </div>
       )}
 
-      <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <CircleUserRound className="w-4 h-4 text-gray-400" />
+      <div className="flex items-center justify-between mt-auto pt-3 border-t border-stone-100">
+        <div className="flex items-center gap-1.5 text-sm text-stone-600">
+          <CircleUserRound className="w-4 h-4 text-stone-400" />
           <span className="truncate max-w-[100px]">{job.seamstressName || 'Unassigned'}</span>
         </div>
 

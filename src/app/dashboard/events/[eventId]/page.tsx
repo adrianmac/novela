@@ -216,30 +216,30 @@ export default async function EventDetail({ params }: { params: { eventId: strin
                       {/* Content Card */}
                       <div className={cn(
                         "flex-1 rounded-xl p-4 sm:p-5 border-2 transition-all cursor-pointer touch-manipulation shadow-sm",
-                        isDone ? "bg-gray-50/50 border-gray-100 hover:border-gray-200" :
+                        isDone ? "bg-stone-50/50 border-stone-100 hover:border-stone-200" :
                         "bg-white border-rose-100 hover:border-rose-300"
                       )}>
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                           <div>
-                            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest mb-2 bg-gray-200 text-gray-600">
+                            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest mb-2 bg-stone-200 text-stone-600">
                               {appt.type}
                             </span>
                             <h4 className={cn(
                               "font-bold text-base sm:text-lg tracking-tight",
-                              isDone ? "text-gray-500 line-through decoration-2" : "text-rose-950"
+                              isDone ? "text-stone-500 line-through decoration-2" : "text-rose-950"
                             )}>
                               {appt.title}
                             </h4>
                           </div>
                           <div className={cn(
                             "font-mono font-bold text-sm bg-white px-3 py-1 rounded-md border shadow-sm",
-                            isDone ? "text-gray-400 border-gray-200" : "text-rose-900 border-rose-200"
+                            isDone ? "text-stone-400 border-stone-200" : "text-rose-900 border-rose-200"
                           )}>
                             {appt.date}
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100/50">
-                          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-stone-100/50">
+                          <span className="text-xs font-bold text-stone-400 uppercase tracking-widest flex items-center gap-2">
                             {appt.staff}
                           </span>
                         </div>

@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import JobCard from './JobCard';
+import type { AlterationJobWithRelations } from '@/lib/types';
 
 interface KanbanViewProps {
-  jobs: any[];
-  onJobClick: (job: any) => void;
+  jobs: AlterationJobWithRelations[];
+  onJobClick: (job: AlterationJobWithRelations) => void;
   onStatusChange: (jobId: string, newStatus: string) => void;
 }
 
@@ -52,7 +53,7 @@ export default function KanbanView({ jobs, onJobClick, onStatusChange }: KanbanV
       {columnsWithJobs.map((column) => (
         <div
           key={column.id}
-          className={`flex-shrink-0 w-80 rounded-xl bg-gray-50/50 border border-gray-100 flex flex-col h-full`}
+          className={`flex-shrink-0 w-80 rounded-xl bg-stone-50/50 border border-stone-100 flex flex-col h-full`}
           onDragOver={(e) => handleDragOver(e, column.id)}
           onDrop={(e) => handleDrop(e, column.id)}
         >
@@ -75,7 +76,7 @@ export default function KanbanView({ jobs, onJobClick, onStatusChange }: KanbanV
               </div>
             ))}
             {column.jobs.length === 0 && (
-              <div className="h-24 rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center text-sm text-gray-400">
+              <div className="h-24 rounded-lg border-2 border-dashed border-stone-200 flex items-center justify-center text-sm text-stone-400">
                 Drop here
               </div>
             )}

@@ -6,11 +6,12 @@ import KanbanView from './KanbanView';
 import ListView from './ListView';
 import JobDetailModal from './JobDetailModal';
 import { updateAlterationStatus } from './actions';
+import type { AlterationJobWithRelations } from '@/lib/types';
 
-export default function AlterationsClient({ initialJobs }: { initialJobs: any[] }) {
+export default function AlterationsClient({ initialJobs }: { initialJobs: AlterationJobWithRelations[] }) {
   const [view, setView] = useState<'kanban' | 'list'>('kanban');
-  const [filter, setFilter] = useState<'all' | 'my'>('all'); // Assuming seamstress views 'my' by default
-  const [selectedJob, setSelectedJob] = useState<any | null>(null);
+  const [filter, setFilter] = useState<'all' | 'my'>('all');
+  const [selectedJob, setSelectedJob] = useState<AlterationJobWithRelations | null>(null);
 
   const activeJobsCount = initialJobs.filter(j => j.status !== 'complete').length;
 
