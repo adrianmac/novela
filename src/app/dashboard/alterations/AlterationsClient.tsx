@@ -34,9 +34,10 @@ export default function AlterationsClient({ initialJobs }: { initialJobs: any[] 
   });
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
+    const label = newStatus.replace(/_/g, ' ');
+    if (!window.confirm(`Move this job to "${label}"?`)) return;
     try {
       await updateAlterationStatus(jobId, newStatus);
-      // Wait for server revalidation or optimistically update local state here
     } catch (error) {
       console.error('Failed to change status', error);
       alert('Failed to update status.');

@@ -93,8 +93,9 @@ export default function JobDetailModal({ job, onClose, onStatusChange }: JobDeta
   const handleStatusAdvance = () => {
     const nextInfo = nextStatusLabel[job.status];
     if (nextInfo) {
+      if (!window.confirm(`${nextInfo.label}? This will change the job status.`)) return;
       onStatusChange(job.id, nextInfo.next);
-      onClose(); // Optional: close modal on status change
+      onClose();
     }
   };
 

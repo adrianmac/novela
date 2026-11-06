@@ -74,6 +74,8 @@ export async function submitIntakeForm(data: unknown) {
 
       await tx.update(events).set({ totalValue: baseAmount }).where(eq(events.id, newEvent.id));
 
+      await tx.update(clients).set({ lastActivityDate: new Date() }).where(eq(clients.id, clientRecord.id));
+
       return { eventId: newEvent.id, clientId: clientRecord.id, date: newEvent.date, services: parsed.services, baseAmount };
     });
 

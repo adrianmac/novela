@@ -30,8 +30,8 @@ export default function CalendarClient({
 }: {
   initialEvents: EventType[], initialAppointments: AppointmentType[]
 }) {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 1)); // Mock current date: Mar 1, 2026
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2026, 2, 16)); // Mock today: Mar 16, 2026
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   const [view, setView] = useState<'month'|'list'>('month');
   const [filterType, setFilterType] = useState<'all'|'weddings'|'quinces'>('all');
@@ -172,7 +172,7 @@ export default function CalendarClient({
           <div className="flex-1 grid grid-cols-7 grid-rows-5 sm:grid-rows-6 border-b border-rose-100">
             {calendarDays.map((d) => {
               const { evts, apts } = getDayItems(d);
-              const isToday = isSameDay(d, new Date(2026, 2, 16)); // Mock today
+              const isToday = isSameDay(d, new Date());
               const isSelected = selectedDate && isSameDay(d, selectedDate);
               const totalChips = evts.length + apts.length;
               const displayEvts = evts.slice(0, 2);

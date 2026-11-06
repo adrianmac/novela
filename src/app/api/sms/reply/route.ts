@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { appointments, clients, tasks } from '@/db/schema';
+import { appointments, clients, tasks, reviews } from '@/db/schema';
 import { eq, and, gte, asc, desc, sql, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -95,24 +95,32 @@ export async function POST(req: Request) {
     } else if (['1', '2', '3', '4', '5'].includes(reply)) {
       const score = parseInt(reply);
 
+      const fromEvents = await db.select({ id: appointments.eventId })
+        .from(appointments)
+        .where(eq(appointments.clientId, client.id))
+        .orderBy(desc(appointments.date))
+        .limit(1);
+
+      const eventId = fromEvents.length > 0 ? fromEvents[0].id : null;
+
+      await db.insert(reviews).values({
+        clientId: client.id,
+        eventId: eventId,
+        score,
+        phone: from,
+      });
+
+      await db.update(clients).set({ lastActivityDate: new Date() }).where(eq(clients.id, client.id));
+
       if (score >= 4) {
         console.log(`[Twilio SMS] To: ${fromStr}\nMessage: Thank you so much! We'd appreciate a Google review: https://g.page/r/fake/review\n`);
-      } else {
-        const fromEvents = await db.select({ id: appointments.eventId })
-          .from(appointments)
-          .where(eq(appointments.clientId, client.id))
-          .orderBy(desc(appointments.date))
-          .limit(1);
-
-        const eventId = fromEvents.length > 0 ? fromEvents[0].id : null;
-        if (eventId) {
-          await db.insert(tasks).values({
-            eventId,
-            title: `Low review score (${score}/5) from ${client.firstName}. Needs follow-up.`,
-            status: 'open',
-            dueDate: new Date().toISOString().split('T')[0],
-          });
-        }
+      } else if (eventId) {
+        await db.insert(tasks).values({
+          eventId,
+          title: `Low review score (${score}/5) from ${client.firstName}. Needs follow-up.`,
+          status: 'open',
+          dueDate: new Date().toISOString().split('T')[0],
+        });
       }
     }
 

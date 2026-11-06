@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { clients, events, appointments, eventServices } from "@/db/schema";
+import { clients, events, appointments, eventServices, payments } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateMilestones } from "@/app/dashboard/events/paymentActions";
@@ -60,8 +60,16 @@ export async function submitBooking(data: unknown) {
       let baseAmount = 500000;
       await tx.update(events).set({ totalValue: baseAmount }).where(eq(events.id, event.id));
 
+      await tx.update(clients).set({ lastActivityDate: new Date() }).where(eq(clients.id, clientRecord.id));
+
       return { eventId: event.id, clientId: clientRecord.id, date: event.date, services: parsed.services, baseAmount };
     });
+
+    const existingMilestones = await db.select({ id: payments.id }).from(payments).where(eq(payments.eventId, result.eventId)).limit(1);
+    if (existingMilestones.length > 0) {
+      revalidatePath("/dashboard");
+      return { success: true };
+    }
 
     await generateMilestones({
       id: result.eventId,

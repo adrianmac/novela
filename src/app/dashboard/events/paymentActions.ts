@@ -1,10 +1,13 @@
 import { db } from "@/db";
 import { payments } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function generateMilestones(
   event: { id: string, clientId: string, date: string | Date, services_json?: string[] },
   totalAmount: number
 ) {
+  const existing = await db.select({ id: payments.id }).from(payments).where(eq(payments.eventId, event.id)).limit(1);
+  if (existing.length > 0) return existing;
   const eventDate = new Date(event.date);
   const today = new Date();
 

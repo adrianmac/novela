@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, integer, uuid, date, boolean, jsonb, index, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, text, timestamp, integer, uuid, date, boolean, jsonb, index, uniqueIndex } from 'drizzle-orm/pg-core';
+
+export const eventStatusEnum = pgEnum('event_status', ['lead', 'booked', 'in_progress', 'completed', 'cancelled']);
+export const appointmentStatusEnum = pgEnum('appointment_status', ['upcoming', 'confirmed', 'completed', 'cancelled', 'no_show', 'reschedule_requested']);
+export const paymentStatusEnum = pgEnum('payment_status', ['pending', 'paid', 'overdue', 'waived']);
+export const inventoryStatusEnum = pgEnum('inventory_status', ['available', 'reserved', 'rented', 'cleaning', 'overdue', 'retired', 'sold']);
+export const alterationStatusEnum = pgEnum('alteration_status', ['measurement_needed', 'in_progress', 'fitting_scheduled', 'complete', 'pending', 'on_hold', 'cancelled']);
+export const rentalStatusEnum = pgEnum('rental_status', ['reserved', 'picked_up', 'returned', 'overdue', 'cancelled']);
 
 export const clients = pgTable('clients', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -166,4 +173,25 @@ export const jobLogs = pgTable('job_logs', {
 }, (table) => ({
   jobNameIdx: index('job_logs_job_name_idx').on(table.jobName),
   createdAtIdx: index('job_logs_created_at_idx').on(table.createdAt),
+}));
+
+export const notes = pgTable('notes', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  text: text('text').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+  eventIdIdx: index('notes_event_id_idx').on(table.eventId),
+}));
+
+export const reviews = pgTable('reviews', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  clientId: uuid('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'set null' }),
+  score: integer('score').notNull(),
+  phone: text('phone'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+  clientIdIdx: index('reviews_client_id_idx').on(table.clientId),
+  eventIdIdx: index('reviews_event_id_idx').on(table.eventId),
 }));

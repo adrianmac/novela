@@ -115,3 +115,10 @@ export const taskToggleSchema = z.object({
   currentStatus: z.enum(['open', 'completed']),
   eventId: z.string().uuid('Invalid event ID'),
 });
+
+export const reviewSchema = z.object({
+  clientId: z.string().uuid('Invalid client ID'),
+  eventId: z.string().uuid('Invalid event ID').optional(),
+  score: z.number().int().min(1).max(5),
+  phone: z.string().max(20).optional(),
+});

@@ -115,6 +115,8 @@ export async function addAppointment(data: unknown) {
       status: "upcoming",
     });
 
+    await db.update(clients).set({ lastActivityDate: new Date() }).where(eq(clients.id, parsed.clientId));
+
     revalidatePath("/dashboard/staff/schedule");
     return { success: true };
   } catch (error) {

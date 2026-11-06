@@ -281,6 +281,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                 )}
                 {item.status === 'reserved' && (
                   <button onClick={async () => {
+                    if (!window.confirm(`Mark "${item.name}" as picked up?`)) return;
                     try { await markItemStatus(item.id, 'rented'); router.refresh(); }
                     catch { alert('Failed to update status'); }
                   }} className="h-13 sm:h-11 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors shadow-sm">
@@ -304,6 +305,7 @@ export default function InventoryClient({ initialItems }: { initialItems: any[] 
                 )}
                 {item.status === 'cleaning' && (
                   <button onClick={async () => {
+                    if (!window.confirm(`Mark "${item.name}" as cleaned and available?`)) return;
                     try { await markItemStatus(item.id, 'available'); router.refresh(); }
                     catch { alert('Failed to update status'); }
                   }} className="h-13 sm:h-11 bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold rounded-xl text-xs uppercase tracking-wider touch-manipulation transition-colors border border-blue-200 flex items-center justify-center gap-2">

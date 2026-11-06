@@ -1,11 +1,11 @@
 'use server'
 
 import { db } from "@/db";
-import { tasks, payments } from "@/db/schema";
+import { tasks, payments, notes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
-import { taskToggleSchema, paymentSchema } from "@/lib/validations";
+import { taskToggleSchema, paymentSchema, noteSchema } from "@/lib/validations";
 
 export async function toggleTaskStatus(taskId: string, currentStatus: string, eventId: string) {
   await requireAuth();
@@ -22,9 +22,18 @@ export async function toggleTaskStatus(taskId: string, currentStatus: string, ev
   }
 }
 
-export async function addNote(_eventId: string, _text: string) {
+export async function addNote(eventId: string, text: string) {
   await requireAuth();
-  return { success: false, error: "Notes feature is not yet implemented" };
+  noteSchema.parse({ eventId, text });
+
+  try {
+    await db.insert(notes).values({ eventId, text });
+    revalidatePath(`/dashboard/events/${eventId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to add note:', error);
+    return { success: false, error: 'Failed to add note' };
+  }
 }
 
 export async function markPaymentPaid(paymentId: string, eventId: string) {
