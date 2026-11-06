@@ -285,7 +285,6 @@ export const winBackCampaign = inngest.createFunction(
     ago90Days.setDate(ago90Days.getDate() - 90);
 
     const clientsToWinBack = await step.run("fetch-win-back-clients", async () => {
-      // Find clients matching criteria
       const allClients = await db.select({
         id: clients.id,
         firstName: clients.firstName,
@@ -295,29 +294,24 @@ export const winBackCampaign = inngest.createFunction(
       .from(clients)
       .where(lte(clients.lastActivityDate, ago60Days));
 
-      const qualified: any[] = [];
+      const candidates = allClients.filter(c => !c.winBackSentAt || new Date(c.winBackSentAt) < ago90Days);
+      if (candidates.length === 0) return [];
+
+      const candidateIds = candidates.map(c => c.id);
       const todayStr = today.toISOString().split('T')[0];
 
-      for (const c of allClients) {
-        // Check win_back_sent_at condition
-        if (c.winBackSentAt && new Date(c.winBackSentAt) >= ago90Days) {
-          continue;
-        }
-
-        // Check if no future events exist
-        const futureEvents = await db.select().from(events).where(
+      const futureEventClients = await db.select({ clientId: events.clientId })
+        .from(events)
+        .where(
           and(
-            eq(events.clientId, c.id),
+            inArray(events.clientId, candidateIds),
             gte(events.date, todayStr),
             or(eq(events.status, 'active'), eq(events.status, 'in_progress'), eq(events.status, 'consultation_scheduled'))
           )
         );
 
-        if (futureEvents.length === 0) {
-          qualified.push(c);
-        }
-      }
-      return qualified;
+      const clientsWithFutureEvents = new Set(futureEventClients.map(e => e.clientId));
+      return candidates.filter(c => !clientsWithFutureEvents.has(c.id));
     });
 
     const processed: string[] = [];
@@ -338,3 +332,10 @@ export const winBackCampaign = inngest.createFunction(
     return { count: processed.length };
   }
 );
+
+export async function sendEventCompletedEvent(eventId: string, clientId: string, clientFirstName: string, clientPhone: string | null, eventType: string) {
+  await inngest.send({
+    name: "event/completed",
+    data: { eventId, clientId, clientFirstName, clientPhone, eventType },
+  });
+}

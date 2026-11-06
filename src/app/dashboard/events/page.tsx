@@ -1,7 +1,7 @@
 import CalendarClient from "./CalendarClient";
 import { db } from "@/db";
 import { events, clients, appointments, eventServices, payments } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, inArray } from "drizzle-orm";
 
 export const revalidate = 0;
 
@@ -17,17 +17,34 @@ export default async function EventsPage() {
     .from(events)
     .innerJoin(clients, eq(events.clientId, clients.id));
 
-  // For each event, we need services and balance info
-  const eventsWithDetails = await Promise.all(allEvents.map(async (event) => {
-    const servicesRow = await db.select({ type: eventServices.serviceType }).from(eventServices).where(eq(eventServices.eventId, event.id));
-    const paymentsRow = await db.select({ status: payments.status }).from(payments).where(eq(payments.eventId, event.id));
+  const eventIds = allEvents.map(e => e.id);
 
-    // Simplistic balance logic
-    const hasOverdue = paymentsRow.some(p => p.status === 'overdue');
-    const hasPending = paymentsRow.some(p => p.status === 'pending');
+  const [allServices, allPaymentRows] = eventIds.length > 0 ? await Promise.all([
+    db.select({ eventId: eventServices.eventId, type: eventServices.serviceType }).from(eventServices).where(inArray(eventServices.eventId, eventIds)),
+    db.select({ eventId: payments.eventId, status: payments.status }).from(payments).where(inArray(payments.eventId, eventIds)),
+  ]) : [[], []];
+
+  const servicesByEvent = new Map<string, string[]>();
+  for (const s of allServices) {
+    const list = servicesByEvent.get(s.eventId) || [];
+    list.push(s.type);
+    servicesByEvent.set(s.eventId, list);
+  }
+
+  const paymentsByEvent = new Map<string, { status: string }[]>();
+  for (const p of allPaymentRows) {
+    const list = paymentsByEvent.get(p.eventId) || [];
+    list.push(p);
+    paymentsByEvent.set(p.eventId, list);
+  }
+
+  const eventsWithDetails = allEvents.map(event => {
+    const services = servicesByEvent.get(event.id) || [];
+    const eventPayments = paymentsByEvent.get(event.id) || [];
+    const hasOverdue = eventPayments.some(p => p.status === 'overdue');
+    const hasPending = eventPayments.some(p => p.status === 'pending');
     const balanceStatus = hasOverdue ? 'overdue' : hasPending ? 'pending' : 'paid';
 
-    // Countdown calculation
     const eventDate = new Date(event.date);
     const now = new Date();
     const diffTime = Math.abs(eventDate.getTime() - now.getTime());
@@ -38,21 +55,21 @@ export default async function EventsPage() {
       type: event.type,
       date: event.date,
       title: event.title,
-      time: '4:00 PM', // Placeholder
-      services: servicesRow.map(s => s.type),
-      venue: 'TBD', // Placeholder
-      totalValue: event.totalValue / 100, // convert back to dollars
+      time: '4:00 PM',
+      services,
+      venue: 'TBD',
+      totalValue: event.totalValue / 100,
       balance: balanceStatus,
       countdown,
     };
-  }));
+  });
 
   const allAppointments = await db
     .select({
       id: appointments.id,
       type: appointments.type,
       date: appointments.date,
-      title: sql<string>`${appointments.type} - ${clients.firstName}`,
+      title: sql<string>`${appointments.type} || ' - ' || ${clients.firstName}`,
     })
     .from(appointments)
     .innerJoin(clients, eq(appointments.clientId, clients.id));

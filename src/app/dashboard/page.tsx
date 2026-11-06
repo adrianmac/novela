@@ -11,7 +11,7 @@ import Link from 'next/link';
 // Database
 import { db } from '@/db';
 import { events, appointments, payments, clients, inventoryRentals, alterationJobs, tasks, inventory } from '@/db/schema';
-import { eq, or, and, lt, lte, gt, gte, sql, desc, asc, ne, isNull } from 'drizzle-orm';
+import { eq, or, and, lt, lte, gt, gte, sql, desc, asc, ne, isNull, inArray } from 'drizzle-orm';
 
 export const revalidate = 0; // Don't cache for this mock purpose
 
@@ -100,23 +100,30 @@ async function getHighestPriorityAlert() {
       )
     );
 
-  for (const e of p2_events) {
-    const finalFittings = await db.select().from(appointments).where(
-      and(
-        eq(appointments.eventId, e.eventId),
-        eq(appointments.type, 'final_fitting'),
-        eq(appointments.status, 'completed')
-      )
-    );
-    if (finalFittings.length === 0) {
-      const clientName = e.firstName + ' ' + e.lastName;
-      const days = getDaysDiff(new Date(e.eventDate), todayDate);
-      return {
-        message: `${clientName}'s final fitting is not scheduled (event in ${days} days)`,
-        action: 'Schedule now →',
-        href: `/dashboard/staff/schedule`,
-        level: 'critical'
-      };
+  if (p2_events.length > 0) {
+    const p2EventIds = p2_events.map(e => e.eventId);
+    const completedFinalFittings = await db.select({ eventId: appointments.eventId })
+      .from(appointments)
+      .where(
+        and(
+          inArray(appointments.eventId, p2EventIds),
+          eq(appointments.type, 'final_fitting'),
+          eq(appointments.status, 'completed')
+        )
+      );
+    const fittedEventIds = new Set(completedFinalFittings.map(f => f.eventId));
+
+    for (const e of p2_events) {
+      if (!fittedEventIds.has(e.eventId)) {
+        const clientName = e.firstName + ' ' + e.lastName;
+        const days = getDaysDiff(new Date(e.eventDate), todayDate);
+        return {
+          message: `${clientName}'s final fitting is not scheduled (event in ${days} days)`,
+          action: 'Schedule now →',
+          href: `/dashboard/staff/schedule`,
+          level: 'critical'
+        };
+      }
     }
   }
 
@@ -203,26 +210,35 @@ async function getHighestPriorityAlert() {
       )
     );
 
-  for (const e of p5_events_initial) {
-    const openTasks = await db.select().from(tasks).where(
+  if (p5_events_initial.length > 0) {
+    const p5EventIds = p5_events_initial.map(e => e.eventId);
+    const openTaskCounts = await db.select({
+      eventId: tasks.eventId,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(tasks)
+    .where(
       and(
-        eq(tasks.eventId, e.eventId),
+        inArray(tasks.eventId, p5EventIds),
         eq(tasks.status, 'open')
       )
-    ).limit(1);
+    )
+    .groupBy(tasks.eventId);
 
-    if (openTasks.length > 0) {
-       const clientName = e.firstName + ' ' + e.lastName;
-       const days = getDaysDiff(new Date(e.eventDate), todayDate);
-       const allOpenTasks = await db.select().from(tasks).where(
-        and(eq(tasks.eventId, e.eventId), eq(tasks.status, 'open'))
-       );
-       return {
-         message: `${clientName}'s event is in ${days} days with ${allOpenTasks.length} required tasks open`,
-         action: 'View tasks →',
-         href: `/dashboard/events/${e.eventId}`,
-         level: 'medium'
-       };
+    const taskCountByEvent = new Map(openTaskCounts.map(t => [t.eventId, t.count]));
+
+    for (const e of p5_events_initial) {
+      const count = taskCountByEvent.get(e.eventId) || 0;
+      if (count > 0) {
+        const clientName = e.firstName + ' ' + e.lastName;
+        const days = getDaysDiff(new Date(e.eventDate), todayDate);
+        return {
+          message: `${clientName}'s event is in ${days} days with ${count} required tasks open`,
+          action: 'View tasks →',
+          href: `/dashboard/events/${e.eventId}`,
+          level: 'medium'
+        };
+      }
     }
   }
 

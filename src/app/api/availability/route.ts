@@ -5,68 +5,78 @@ import { gte, lte, and, eq } from "drizzle-orm";
 import { addDays, startOfDay, endOfDay, format } from "date-fns";
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const startDateStr = searchParams.get("startDate");
-  const endDateStr = searchParams.get("endDate");
-  const staffId = searchParams.get("staffId");
+  try {
+    const { searchParams } = new URL(request.url);
+    const startDateStr = searchParams.get("startDate");
+    const endDateStr = searchParams.get("endDate");
+    const staffId = searchParams.get("staffId");
 
-  if (!startDateStr || !endDateStr) {
-    return NextResponse.json({ error: "Missing startDate or endDate" }, { status: 400 });
-  }
+    if (!startDateStr || !endDateStr) {
+      return NextResponse.json({ error: "Missing startDate or endDate" }, { status: 400 });
+    }
 
-  const startDate = new Date(startDateStr);
-  const endDate = new Date(endDateStr);
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
 
-  // Fetch all appointments in this range
-  let conditions = [
-    gte(appointments.date, startOfDay(startDate)),
-    lte(appointments.date, endOfDay(endDate)),
-  ];
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
+    }
 
-  if (staffId && staffId !== 'any') {
-    conditions.push(eq(appointments.staffId, staffId));
-  }
+    if (endDate < startDate) {
+      return NextResponse.json({ error: "endDate must be after startDate" }, { status: 400 });
+    }
 
-  const bookedAppointments = await db.select({
-    date: appointments.date,
-    // duration: appointments.durationMinutes,
-  })
-  .from(appointments)
-  .where(and(...conditions));
+    const maxRange = 60 * 24 * 60 * 60 * 1000;
+    if (endDate.getTime() - startDate.getTime() > maxRange) {
+      return NextResponse.json({ error: "Date range too large (max 60 days)" }, { status: 400 });
+    }
 
-  // Generate all possible 30-min slots for each day in the range
-  const slots: Record<string, { time: string; available: boolean }[]> = {};
+    let conditions = [
+      gte(appointments.date, startOfDay(startDate)),
+      lte(appointments.date, endOfDay(endDate)),
+    ];
 
-  for (let d = new Date(startDate); d <= endDate; d = addDays(d, 1)) {
-    const dayKey = format(d, 'yyyy-MM-dd');
-    slots[dayKey] = [];
+    if (staffId && staffId !== 'any') {
+      conditions.push(eq(appointments.staffId, staffId));
+    }
 
-    // Store hours: 8am to 7pm (19:00)
-    for (let hour = 8; hour < 19; hour++) {
-      for (let min of [0, 30]) {
-        const slotTime = new Date(d);
-        slotTime.setHours(hour, min, 0, 0);
+    const bookedAppointments = await db.select({
+      date: appointments.date,
+    })
+    .from(appointments)
+    .where(and(...conditions));
 
-        // Check if this slot conflicts with any booked appointment
-        const isBooked = bookedAppointments.some(appt => {
-          const apptStart = new Date(appt.date);
-          const apptEnd = new Date(apptStart.getTime() + 60 * 60000); // hardcode to 1hr for now
+    const slots: Record<string, { time: string; available: boolean }[]> = {};
 
-          // Overlap condition: slotStart < apptEnd AND slotEnd > apptStart
-          const slotEnd = new Date(slotTime.getTime() + 30 * 60000);
-          return slotTime < apptEnd && slotEnd > apptStart;
-        });
+    for (let d = new Date(startDate); d <= endDate; d = addDays(d, 1)) {
+      const dayKey = format(d, 'yyyy-MM-dd');
+      slots[dayKey] = [];
 
-        // Also don't show past slots as available if it's today
-        const isPast = slotTime < new Date();
+      for (let hour = 8; hour < 19; hour++) {
+        for (let min of [0, 30]) {
+          const slotTime = new Date(d);
+          slotTime.setHours(hour, min, 0, 0);
 
-        slots[dayKey].push({
-          time: format(slotTime, 'HH:mm'),
-          available: !isBooked && !isPast
-        });
+          const isBooked = bookedAppointments.some(appt => {
+            const apptStart = new Date(appt.date);
+            const apptEnd = new Date(apptStart.getTime() + 60 * 60000);
+            const slotEnd = new Date(slotTime.getTime() + 30 * 60000);
+            return slotTime < apptEnd && slotEnd > apptStart;
+          });
+
+          const isPast = slotTime < new Date();
+
+          slots[dayKey].push({
+            time: format(slotTime, 'HH:mm'),
+            available: !isBooked && !isPast
+          });
+        }
       }
     }
-  }
 
-  return NextResponse.json({ slots });
+    return NextResponse.json({ slots });
+  } catch (error) {
+    console.error("Availability check error:", error);
+    return NextResponse.json({ error: "Failed to check availability" }, { status: 500 });
+  }
 }

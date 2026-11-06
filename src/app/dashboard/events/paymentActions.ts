@@ -1,8 +1,5 @@
-'use server'
-
 import { db } from "@/db";
 import { payments } from "@/db/schema";
-import { sql } from "drizzle-orm";
 
 export async function generateMilestones(
   event: { id: string, clientId: string, date: string | Date, services_json?: string[] },

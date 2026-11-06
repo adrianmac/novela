@@ -85,7 +85,7 @@ export async function getAlterations() {
     }));
   } catch (error) {
     console.error('Failed to get alterations:', error);
-    throw new Error('Failed to fetch alteration jobs');
+    return [];
   }
 }
 
@@ -148,19 +148,21 @@ export async function addAlterationItem(jobId: string, taskName: string, descrip
   alterationItemSchema.parse({ jobId, taskName, description, estimatedPrice });
 
   try {
-    await db.insert(alterationItems).values({
-      jobId,
-      taskName,
-      description,
-      estimatedPrice,
+    return await db.transaction(async (tx) => {
+      await tx.insert(alterationItems).values({
+        jobId,
+        taskName,
+        description,
+        estimatedPrice,
+      });
+
+      const items = await tx.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
+      const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
+      await tx.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
+
+      revalidatePath('/dashboard/alterations');
+      return { success: true };
     });
-
-    const items = await db.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
-    const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
-    await db.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
-
-    revalidatePath('/dashboard/alterations');
-    return { success: true };
   } catch (error) {
     console.error('Failed to add alteration item:', error);
     return { success: false, error: 'Failed to add item' };
@@ -173,14 +175,16 @@ export async function deleteAlterationItem(itemId: string, jobId: string) {
   z.string().uuid().parse(jobId);
 
   try {
-    await db.delete(alterationItems).where(eq(alterationItems.id, itemId));
+    return await db.transaction(async (tx) => {
+      await tx.delete(alterationItems).where(eq(alterationItems.id, itemId));
 
-    const items = await db.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
-    const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
-    await db.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
+      const items = await tx.select().from(alterationItems).where(eq(alterationItems.jobId, jobId));
+      const total = items.reduce((sum, item) => sum + item.estimatedPrice, 0);
+      await tx.update(alterationJobs).set({ totalEstimatedPrice: total }).where(eq(alterationJobs.id, jobId));
 
-    revalidatePath('/dashboard/alterations');
-    return { success: true };
+      revalidatePath('/dashboard/alterations');
+      return { success: true };
+    });
   } catch (error) {
     console.error('Failed to delete alteration item:', error);
     return { success: false, error: 'Failed to delete item' };
